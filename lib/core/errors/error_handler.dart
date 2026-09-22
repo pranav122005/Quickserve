@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart' as supa;
 import 'app_exception.dart';
+import '../../services/audit_service.dart';
 
 /// Translates technical or database exceptions into clean, user-friendly messages.
 class ErrorHandler {
@@ -26,8 +27,10 @@ class ErrorHandler {
     }
 
     if (error is supa.PostgrestException) {
+      AuditService().logDatabaseError('database_query', error.message, context: error.code);
       // Map Postgrest codes safely without exposing raw SQL errors
       if (error.code == '42501' || error.message.contains('permission denied')) {
+        AuditService().logAuthorizationFailed(reason: 'database_permission_denied_42501');
         return 'You do not have permission to view or modify this data.';
       }
       if (error.code == 'PGRST116') {

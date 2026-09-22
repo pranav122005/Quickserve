@@ -7,6 +7,7 @@ enum AuthStatus {
   loading,
   authenticated,
   unauthenticated,
+  pendingConfirmation,
   error,
   profileError,
 }
@@ -43,6 +44,9 @@ class AppAuthState {
   factory AppAuthState.unauthenticated() =>
       const AppAuthState(status: AuthStatus.unauthenticated);
 
+  factory AppAuthState.pendingConfirmation(supa.User user) =>
+      AppAuthState(status: AuthStatus.pendingConfirmation, user: user);
+
   factory AppAuthState.error(String message, {supa.User? user}) => AppAuthState(
         status: AuthStatus.error,
         user: user,
@@ -60,6 +64,7 @@ class AppAuthState {
       status == AuthStatus.authenticated && profile != null;
   bool get isLoading => status == AuthStatus.loading;
   bool get isInitial => status == AuthStatus.initial;
+  bool get isPendingConfirmation => status == AuthStatus.pendingConfirmation;
   bool get hasError => status == AuthStatus.error;
   bool get hasProfileError => status == AuthStatus.profileError;
   UserRole? get role => profile?.role;

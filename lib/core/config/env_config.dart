@@ -7,10 +7,12 @@ import '../errors/app_exception.dart';
 class EnvConfig {
   static const String supabaseUrl = String.fromEnvironment(
     'SUPABASE_URL',
+    defaultValue: 'https://qlnonehymdltnuoappyh.supabase.co',
   );
 
   static const String supabaseAnonKey = String.fromEnvironment(
     'SUPABASE_ANON_KEY',
+    defaultValue: 'sb_publishable_oMkT0B6-GMlQQ-YDFNBzYQ_dMelkjoO',
   );
 
   /// Validates that all required environment variables are set and properly formatted.

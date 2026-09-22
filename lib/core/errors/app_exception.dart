@@ -49,3 +49,13 @@ class NetworkException extends AppException {
     super.message = 'Network connection failed. Please check your internet connection.',
   ]);
 }
+
+/// Thrown when a service request or business operation fails.
+class ServiceException extends AppException {
+  const ServiceException(super.message, {super.technicalDetails});
+}
+
+/// Thrown when input data fails business rule validation.
+class ValidationException extends AppException {
+  const ValidationException(super.message, {super.technicalDetails});
+}

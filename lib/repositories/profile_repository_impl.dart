@@ -1,5 +1,6 @@
 import 'profile_repository.dart';
 import '../models/user_profile.dart';
+import '../models/user_role.dart';
 import '../services/supabase_service.dart';
 import '../core/constants/app_constants.dart';
 import '../core/errors/app_exception.dart';
@@ -38,5 +39,17 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
     if (response == null) return null;
     return UserProfile.fromMap(response);
+  }
+
+  @override
+  Future<List<UserProfile>> getAllCustomers() async {
+    final response = await _supabaseService.client
+        .from(DbTables.profiles)
+        .select()
+        .eq(DbColumns.role, UserRole.customer.dbValue)
+        .order(DbColumns.createdAt, ascending: false);
+
+    final list = response as List;
+    return list.map((item) => UserProfile.fromMap(item as Map<String, dynamic>)).toList();
   }
 }

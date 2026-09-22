@@ -26,7 +26,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String fullName,
     String? phone,
   }) async {
-    // Only pass non-privileged user metadata. Role is NOT submitted.
+    // Only pass standard user metadata (full name, optional phone). Role is forced server-side.
     final data = <String, dynamic>{
       'full_name': fullName.trim(),
     };
@@ -44,6 +44,11 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> signOut() async {
     await _supabaseService.auth.signOut();
+  }
+
+  @override
+  Future<void> resetPassword({required String email}) async {
+    await _supabaseService.auth.resetPasswordForEmail(email.trim());
   }
 
   @override

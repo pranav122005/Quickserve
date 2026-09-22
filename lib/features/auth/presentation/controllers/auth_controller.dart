@@ -7,6 +7,7 @@ import '../../../../repositories/auth_repository.dart';
 import '../../../../repositories/profile_repository.dart';
 import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/app_exception.dart';
+import '../../../../services/audit_service.dart';
 
 /// Manages authentication state, user session restoration, and profile loading.
 class AuthController extends Notifier<AppAuthState> {
@@ -82,7 +83,25 @@ class AuthController extends Notifier<AppAuthState> {
       }
 
       await _loadUserProfile(user);
+      if (state.isAuthenticated) {
+        ref.read(auditServiceProvider).logLoginSuccess(
+          user.id,
+          email: user.email,
+          role: state.profile?.role.dbValue,
+        );
+      }
       return state.isAuthenticated;
+    } catch (e) {
+      final userMessage = ErrorHandler.getUserMessage(e);
+      state = AppAuthState.error(userMessage);
+      return false;
+    }
+  }
+
+  Future<bool> resetPassword({required String email}) async {
+    try {
+      await _authRepository.resetPassword(email: email);
+      return true;
     } catch (e) {
       final userMessage = ErrorHandler.getUserMessage(e);
       state = AppAuthState.error(userMessage);
@@ -115,7 +134,8 @@ class AuthController extends Notifier<AppAuthState> {
         await _loadUserProfile(user);
         return state.isAuthenticated;
       } else {
-        state = AppAuthState.unauthenticated();
+        // Email confirmation is required by Supabase backend settings
+        state = AppAuthState.pendingConfirmation(user);
         return true;
       }
     } catch (e) {

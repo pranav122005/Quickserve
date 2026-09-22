@@ -3,25 +3,8 @@ import 'auth_controller.dart';
 import 'auth_state.dart';
 import '../../../../models/user_profile.dart';
 import '../../../../models/user_role.dart';
-import '../../../../services/supabase_service.dart';
-import '../../../../repositories/auth_repository.dart';
-import '../../../../repositories/auth_repository_impl.dart';
-import '../../../../repositories/profile_repository.dart';
-import '../../../../repositories/profile_repository_impl.dart';
 
-final supabaseServiceProvider = Provider<SupabaseService>((ref) {
-  return SupabaseService();
-});
-
-final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  final supabaseService = ref.watch(supabaseServiceProvider);
-  return AuthRepositoryImpl(supabaseService);
-});
-
-final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
-  final supabaseService = ref.watch(supabaseServiceProvider);
-  return ProfileRepositoryImpl(supabaseService);
-});
+export '../../../../repositories/repository_providers.dart';
 
 final authControllerProvider =
     NotifierProvider<AuthController, AppAuthState>(AuthController.new);

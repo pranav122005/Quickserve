@@ -9,7 +9,10 @@ build/
 .flutter-plugins
 .flutter-plugins-dependencies
 
-# IDE
+# IDE & Build
 .idea/
 .vscode/
 *.iml
+.kotlin/
+android/.kotlin/
+*.log

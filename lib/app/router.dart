@@ -10,8 +10,11 @@ import '../features/auth/presentation/screens/register_screen.dart';
 import '../features/auth/presentation/screens/splash_screen.dart';
 import '../features/auth/presentation/screens/unauthorized_screen.dart';
 import '../features/customer/presentation/screens/customer_dashboard.dart';
+import '../features/customer/presentation/screens/customer_mobile_shell.dart';
 import '../features/agent/presentation/screens/agent_dashboard.dart';
+import '../features/agent/presentation/screens/agent_mobile_shell.dart';
 import '../features/admin/presentation/screens/admin_dashboard.dart';
+import '../services/audit_service.dart';
 
 /// Pure routing guard logic separated for unit testing and router redirect evaluation.
 String? computeRouteRedirect({
@@ -44,6 +47,10 @@ String? computeRouteRedirect({
       return null;
     }
     // All other screens require authentication -> redirect to login
+    AuditService().logAuthorizationFailed(
+      path: currentPath,
+      reason: 'unauthenticated_access_attempt',
+    );
     return AppRoutes.login;
   }
 
@@ -71,10 +78,22 @@ String? computeRouteRedirect({
   final isAdminPath = currentPath.startsWith(AppRoutes.admin);
 
   if (role.isCustomer && (isAgentPath || isAdminPath)) {
+    AuditService().logAuthorizationFailed(
+      path: currentPath,
+      role: role.dbValue,
+      reason: 'customer_privilege_escalation_attempt',
+      actorId: authState.user?.id,
+    );
     return AppRoutes.customer;
   }
 
   if (role.isAgent && (isCustomerPath || isAdminPath)) {
+    AuditService().logAuthorizationFailed(
+      path: currentPath,
+      role: role.dbValue,
+      reason: 'agent_privilege_escalation_attempt',
+      actorId: authState.user?.id,
+    );
     return AppRoutes.agent;
   }
 
@@ -129,11 +148,25 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.customer,
-        builder: (context, state) => const CustomerDashboard(),
+        builder: (context, state) => LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth > 768) {
+              return const CustomerDashboard();
+            }
+            return const CustomerMobileShell();
+          },
+        ),
       ),
       GoRoute(
         path: AppRoutes.agent,
-        builder: (context, state) => const AgentDashboard(),
+        builder: (context, state) => LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth > 768) {
+              return const AgentDashboard();
+            }
+            return const AgentMobileShell();
+          },
+        ),
       ),
       GoRoute(
         path: AppRoutes.admin,

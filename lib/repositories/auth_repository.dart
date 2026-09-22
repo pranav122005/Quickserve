@@ -11,7 +11,7 @@ abstract class AuthRepository {
   /// Registers a new user account.
   /// 
   /// Only standard profile metadata (full name, optional phone) is submitted.
-  /// Role assignment is strictly governed by the database trigger.
+  /// Role assignment is strictly governed by the database trigger (defaults to customer).
   Future<AuthResponse> signUp({
     required String email,
     required String password,
@@ -21,6 +21,9 @@ abstract class AuthRepository {
 
   /// Signs out the currently authenticated user.
   Future<void> signOut();
+
+  /// Sends a password reset email to the provided email address.
+  Future<void> resetPassword({required String email});
 
   /// Stream of Supabase authentication state changes.
   Stream<AuthState> get authStateChanges;
