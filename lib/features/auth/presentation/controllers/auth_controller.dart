@@ -5,6 +5,7 @@ import 'auth_state.dart';
 import 'auth_providers.dart';
 import '../../../../repositories/auth_repository.dart';
 import '../../../../repositories/profile_repository.dart';
+import '../../../../repositories/repository_providers.dart';
 import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../services/audit_service.dart';

@@ -370,105 +370,119 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                   separatorBuilder: (_, _) => const Divider(height: 1),
                   itemBuilder: (context, index) {
                     final req = filtered[index];
-                    return ListTile(
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      title: Row(
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: Text(
-                              '${req.formattedId} • ${req.title}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15,
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  '${req.formattedId} • ${req.title}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
                               ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                              const SizedBox(width: 8),
+                              Wrap(
+                                spacing: 6,
+                                runSpacing: 6,
+                                children: [
+                                  PriorityBadge(priority: req.priority),
+                                  StatusBadge.forRequest(req.status),
+                                ],
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 8),
-                          PriorityBadge(priority: req.priority),
-                          const SizedBox(width: 8),
-                          StatusBadge.forRequest(req.status),
-                        ],
-                      ),
-                      subtitle: Padding(
-                        padding: const EdgeInsets.only(top: 6.0),
-                        child: Row(
-                          children: [
-                            Icon(Icons.category_outlined,
-                                size: 14, color: Colors.grey.shade600),
-                            const SizedBox(width: 4),
-                            Text(req.category,
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.grey.shade700)),
-                            const SizedBox(width: 16),
-                            Icon(Icons.calendar_today_outlined,
-                                size: 14, color: Colors.grey.shade600),
-                            const SizedBox(width: 4),
-                            Text(
-                              Formatters.formatDateTime(req.createdAt),
-                              style: TextStyle(
-                                  fontSize: 12, color: Colors.grey.shade700),
-                            ),
-                            const SizedBox(width: 16),
-                            Icon(Icons.place_outlined,
-                                size: 14, color: Colors.grey.shade600),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                req.serviceAddress,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.grey.shade700),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 12,
+                            runSpacing: 4,
+                            children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.category_outlined, size: 14, color: Colors.grey.shade600),
+                                  const SizedBox(width: 4),
+                                  Text(req.category, style: TextStyle(fontSize: 12, color: Colors.grey.shade700)),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (req.status.isPending || req.status.isDispatching) ...[
-                            ElevatedButton.icon(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF2563EB),
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 8),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.calendar_today_outlined, size: 14, color: Colors.grey.shade600),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    Formatters.formatDateTime(req.createdAt),
+                                    style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                                  ),
+                                ],
                               ),
-                              icon: const Icon(Icons.radar, size: 14),
-                              label: Text(
-                                req.status.isDispatching ? 'Retry Dispatch' : 'Dispatch',
-                                style: const TextStyle(fontSize: 12),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.place_outlined, size: 14, color: Colors.grey.shade600),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    req.serviceAddress,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                                  ),
+                                ],
                               ),
-                              onPressed: () => _autoDispatch(req),
-                            ),
-                            const SizedBox(width: 8),
-                          ],
-                          if (req.status.isPending) ...[
-                            ElevatedButton.icon(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.deepPurple,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 8),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: [
+                                  if (req.status.isPending || req.status.isDispatching)
+                                    ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(0xFF2563EB),
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                      ),
+                                      icon: const Icon(Icons.radar, size: 14),
+                                      label: Text(
+                                        req.status.isDispatching ? 'Retry Dispatch' : 'Dispatch',
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                      onPressed: () => _autoDispatch(req),
+                                    ),
+                                  if (req.status.isPending)
+                                    ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.deepPurple,
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                      ),
+                                      icon: const Icon(Icons.person_add, size: 14),
+                                      label: const Text('Assign', style: TextStyle(fontSize: 12)),
+                                      onPressed: () => _assignRequest(req),
+                                    ),
+                                  OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                    ),
+                                    child: const Text('Inspect', style: TextStyle(fontSize: 12)),
+                                    onPressed: () => _inspectRequest(req),
+                                  ),
+                                ],
                               ),
-                              icon: const Icon(Icons.person_add, size: 16),
-                              label: const Text('Assign',
-                                  style: TextStyle(fontSize: 12)),
-                              onPressed: () => _assignRequest(req),
-                            ),
-                            const SizedBox(width: 8),
-                          ],
-                          OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 8),
-                            ),
-                            child: const Text('Inspect',
-                                style: TextStyle(fontSize: 12)),
-                            onPressed: () => _inspectRequest(req),
+                            ],
                           ),
                         ],
                       ),

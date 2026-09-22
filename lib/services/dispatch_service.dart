@@ -31,6 +31,59 @@ class DispatchService {
         reason: 'unexpected_response_format',
       );
     } on PostgrestException catch (e) {
+      if (e.code == 'PGRST202') {
+        // Fallback: candidate matching via direct queries if RPC is not deployed yet
+        try {
+          // 1. Fetch available agents
+          final availableAgentsRes = await _client
+              .from('agent_profiles')
+              .select('user_id')
+              .eq('availability', 'available')
+              .limit(1);
+
+          final agentsList = availableAgentsRes as List;
+          if (agentsList.isEmpty) {
+            return const DispatchResult(
+              success: false,
+              reason: 'no_available_agents',
+            );
+          }
+
+          final candidateAgentId = agentsList.first['user_id'] as String;
+          final nowIso = DateTime.now().toIso8601String();
+
+          // 2. Insert assignment offer
+          final assignmentRes = await _client
+              .from('service_assignments')
+              .insert({
+                'request_id': requestId,
+                'agent_id': candidateAgentId,
+                'status': 'offered',
+                'offered_at': nowIso,
+              })
+              .select('id')
+              .single();
+
+          final assignmentId = assignmentRes['id'] as String;
+
+          // 3. Update request status to dispatching
+          await _client
+              .from('service_requests')
+              .update({'status': 'dispatching'})
+              .eq('id', requestId);
+
+          return DispatchResult(
+            success: true,
+            assignmentId: assignmentId,
+            agentId: candidateAgentId,
+          );
+        } catch (_) {
+          return const DispatchResult(
+            success: false,
+            reason: 'no_available_agents',
+          );
+        }
+      }
       throw ServiceException(e.message, technicalDetails: e.details?.toString());
     } catch (e) {
       throw ServiceException('Failed to dispatch service request: $e');

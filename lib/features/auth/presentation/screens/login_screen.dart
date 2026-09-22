@@ -263,6 +263,62 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                         ),
                       ),
+                      const Text(
+                        'Quick Demo Login Accounts:',
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                side: BorderSide(color: Colors.deepPurple.shade300),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _emailController.text = 'admin@quickserve.com';
+                                  _passwordController.text = 'admin123';
+                                });
+                              },
+                              child: const Text('👑 Admin', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                side: BorderSide(color: Colors.green.shade300),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _emailController.text = 'agent@quickserve.com';
+                                  _passwordController.text = 'agent123';
+                                });
+                              },
+                              child: const Text('🛠️ Agent', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                side: BorderSide(color: Colors.blue.shade300),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _emailController.text = 'customer@quickserve.com';
+                                  _passwordController.text = 'customer123';
+                                });
+                              },
+                              child: const Text('👤 Customer', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 16),
                       SizedBox(
                         height: 48,

@@ -1,3 +1,4 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'assignment_repository.dart';
 import '../models/service_assignment.dart';
 import '../models/service_request.dart';
@@ -72,7 +73,20 @@ class AssignmentRepositoryImpl implements AssignmentRepository {
   }) async {
     final nowIso = DateTime.now().toIso8601String();
 
-    // 1. Update assignment
+    try {
+      final response = await _supabaseService.client.rpc(
+        'accept_service_offer',
+        params: {'p_assignment_id': assignmentId},
+      );
+      if (response is Map) {
+        final success = response['success'] as bool? ?? false;
+        if (success) return;
+      }
+    } on PostgrestException catch (e) {
+      if (e.code != 'PGRST202') rethrow;
+    }
+
+    // Direct DB Fallback
     await _supabaseService.client
         .from(DbTables.serviceAssignments)
         .update({
@@ -81,19 +95,17 @@ class AssignmentRepositoryImpl implements AssignmentRepository {
         })
         .eq(DbColumns.id, assignmentId);
 
-    // 2. Update service request
     await _supabaseService.client
         .from(DbTables.serviceRequests)
         .update({DbColumns.status: RequestStatus.assigned.dbValue})
         .eq(DbColumns.id, requestId);
 
-    // 3. Record history
     try {
       await _supabaseService.client.from(DbTables.requestStatusHistory).insert({
         DbColumns.requestId: requestId,
         DbColumns.oldStatus: RequestStatus.dispatching.dbValue,
         DbColumns.newStatus: RequestStatus.assigned.dbValue,
-        DbColumns.changedBy: agentId,
+        DbColumns.changedBy: agentId ?? _supabaseService.client.auth.currentUser?.id,
         DbColumns.note: 'Offer accepted by service agent.',
       });
     } catch (_) {}
@@ -107,6 +119,20 @@ class AssignmentRepositoryImpl implements AssignmentRepository {
   }) async {
     final nowIso = DateTime.now().toIso8601String();
 
+    try {
+      final response = await _supabaseService.client.rpc(
+        'reject_service_offer',
+        params: {'p_assignment_id': assignmentId},
+      );
+      if (response is Map) {
+        final success = response['success'] as bool? ?? false;
+        if (success) return;
+      }
+    } on PostgrestException catch (e) {
+      if (e.code != 'PGRST202') rethrow;
+    }
+
+    // Direct DB Fallback
     await _supabaseService.client
         .from(DbTables.serviceAssignments)
         .update({
@@ -125,7 +151,7 @@ class AssignmentRepositoryImpl implements AssignmentRepository {
         DbColumns.requestId: requestId,
         DbColumns.oldStatus: RequestStatus.dispatching.dbValue,
         DbColumns.newStatus: RequestStatus.pending.dbValue,
-        DbColumns.changedBy: agentId,
+        DbColumns.changedBy: agentId ?? _supabaseService.client.auth.currentUser?.id,
         DbColumns.note: 'Offer declined by agent.',
       });
     } catch (_) {}
@@ -197,21 +223,60 @@ class AssignmentRepositoryImpl implements AssignmentRepository {
     required String requestId,
     required String agentId,
   }) async {
-    final response = await _supabaseService.client.rpc(
-      'admin_assign_service_request',
-      params: {
-        'p_request_id': requestId,
-        'p_agent_id': agentId,
-      },
-    );
+    final nowIso = DateTime.now().toIso8601String();
 
-    if (response is Map) {
-      final map = Map<String, dynamic>.from(response);
-      final success = map['success'] as bool? ?? false;
-      if (!success) {
-        final reason = map['reason'] as String? ?? 'unknown';
-        final message = map['message'] as String? ?? 'Admin assignment failed ($reason).';
-        throw ServiceException(message);
+    try {
+      final response = await _supabaseService.client.rpc(
+        'admin_assign_service_request',
+        params: {
+          'p_request_id': requestId,
+          'p_agent_id': agentId,
+        },
+      );
+
+      if (response is Map) {
+        final map = Map<String, dynamic>.from(response);
+        final success = map['success'] as bool? ?? false;
+        if (!success) {
+          final reason = map['reason'] as String? ?? 'unknown';
+          if (reason == 'unauthorized_not_admin') {
+            throw const ServiceException(
+              'Your logged in user account does not have Admin privileges. Please sign in as Admin (admin@quickserve.com) to assign agents.',
+            );
+          }
+          final message = map['message'] as String? ?? 'Admin assignment failed ($reason).';
+          throw ServiceException(message);
+        }
+      }
+    } on PostgrestException catch (e) {
+      if (e.code == 'PGRST202') {
+        // Fallback to direct DB insert if RPC is missing
+        try {
+          await _supabaseService.client.from(DbTables.serviceAssignments).insert({
+            DbColumns.requestId: requestId,
+            DbColumns.agentId: agentId,
+            DbColumns.status: AssignmentStatus.offered.dbValue,
+            DbColumns.offeredAt: nowIso,
+          });
+
+          await _supabaseService.client
+              .from(DbTables.serviceRequests)
+              .update({DbColumns.status: RequestStatus.dispatching.dbValue})
+              .eq(DbColumns.id, requestId);
+        } on PostgrestException catch (fallbackErr) {
+          if (fallbackErr.code == '42501') {
+            throw const ServiceException(
+              'Your logged in user account does not have Admin privileges. Please sign in as Admin (admin@quickserve.com) to assign agents.',
+            );
+          }
+          rethrow;
+        }
+      } else if (e.code == '42501') {
+        throw const ServiceException(
+          'Your logged in user account does not have Admin privileges. Please sign in as Admin (admin@quickserve.com) to assign agents.',
+        );
+      } else {
+        rethrow;
       }
     }
 
