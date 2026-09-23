@@ -137,6 +137,12 @@ class AgentDashboardController extends Notifier<AgentDashboardState> {
       final repo = ref.read(agentProfileRepositoryProvider);
       final updated = await repo.updateAvailability(user.id, newStatus);
       state = state.copyWith(agentProfile: updated);
+
+      if (available) {
+        ref.read(agentLocationControllerProvider.notifier).startPublishing(user.id);
+      } else {
+        ref.read(agentLocationControllerProvider.notifier).stopPublishing();
+      }
       return true;
     } catch (e) {
       final message = ErrorHandler.getUserMessage(e);
