@@ -1,6 +1,7 @@
 <p align="center">
-  <img src="docs/assets/quickserve-logo.jpg" alt="QuickServe Logo" width="400">
+  <img src="docs/assets/quickserve-hero.png" alt="QuickServe Application Showcase" width="90%">
 </p>
+
 
 # ⚡ QuickServe
 
@@ -351,11 +352,6 @@ Detailed security architecture details can be found in [docs/SECURITY.md](docs/S
 
 ---
 
-
-
-<p align="center">
-  <img src="docs/assets/quickserve-hero.png" alt="QuickServe Application Showcase" width="90%">
-</p>
 
 ---
 
