@@ -4,7 +4,6 @@ import '../../../../core/widgets/dashboard_shell.dart';
 import '../../../../core/widgets/empty_state_view.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../../core/widgets/status_badge.dart';
-import '../../../../core/widgets/priority_badge.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../models/service_assignment.dart';
 import '../../../../models/user_role.dart';

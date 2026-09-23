@@ -6,7 +6,7 @@ import '../../../../models/payment_record.dart';
 import '../../../../repositories/repository_providers.dart';
 import '../../../auth/presentation/controllers/auth_providers.dart';
 import '../../../../core/errors/error_handler.dart';
-import '../../../../core/errors/app_exception.dart';
+
 import '../../../../core/constants/app_constants.dart';
 import '../../../../services/audit_service.dart';
 import 'agent_location_controller.dart';
@@ -194,7 +194,7 @@ class AgentDashboardController extends Notifier<AgentDashboardState> {
   }
 
   Future<bool> rejectOffer(String assignmentId, String requestId) async {
-    final user = ref.read(authRepositoryProvider).currentUser;
+
     try {
       final dispatchService = ref.read(dispatchServiceProvider);
       await dispatchService.rejectOffer(assignmentId);

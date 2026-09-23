@@ -1,7 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'assignment_repository.dart';
 import '../models/service_assignment.dart';
-import '../models/service_request.dart';
 import '../services/supabase_service.dart';
 import '../core/constants/app_constants.dart';
 import '../core/errors/app_exception.dart';

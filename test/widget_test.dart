@@ -48,7 +48,7 @@ void main() {
 
     expect(find.text('QuickServe'), findsOneWidget);
     expect(find.text('Create a customer or service-agent account'), findsOneWidget);
-    expect(find.widgetWithText(ElevatedButton, 'Create Account'), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, 'Create Customer Account'), findsOneWidget);
     expect(find.text('Full Name'), findsOneWidget);
     expect(find.text('Email Address'), findsOneWidget);
     expect(find.text('Password'), findsOneWidget);

@@ -16,3 +16,4 @@ build/
 .kotlin/
 android/.kotlin/
 *.log
+quickserve_log.txt
