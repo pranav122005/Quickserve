@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../models/user_role.dart';
 import '../controllers/auth_providers.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -19,6 +20,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _phoneController = TextEditingController();
 
   bool _obscurePassword = true;
+  UserRole _requestedRole = UserRole.customer;
 
   @override
   void dispose() {
@@ -37,6 +39,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           email: _emailController.text.trim(),
           password: _passwordController.text,
           fullName: _fullNameController.text.trim(),
+          requestedRole: _requestedRole,
           phone: phoneText.isNotEmpty ? phoneText : null,
         );
   }
@@ -175,7 +178,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Create your customer account',
+                        'Create a customer or service-agent account',
                         textAlign: TextAlign.center,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: Colors.grey.shade600,
@@ -208,6 +211,33 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             ],
                           ),
                         ),
+                      SegmentedButton<UserRole>(
+                        segments: const [
+                          ButtonSegment(
+                            value: UserRole.customer,
+                            icon: Icon(Icons.person_outline),
+                            label: Text('Customer'),
+                          ),
+                          ButtonSegment(
+                            value: UserRole.agent,
+                            icon: Icon(Icons.engineering_outlined),
+                            label: Text('Agent'),
+                          ),
+                        ],
+                        selected: {_requestedRole},
+                        onSelectionChanged: (roles) {
+                          setState(() => _requestedRole = roles.first);
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        _requestedRole == UserRole.agent
+                            ? 'Agent accounts require Admin verification before receiving service offers.'
+                            : 'Customer accounts can create and track service requests.',
+                        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
                       TextFormField(
                         controller: _fullNameController,
                         decoration: const InputDecoration(
@@ -307,8 +337,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                     color: Colors.white,
                                   ),
                                 )
-                              : const Text(
-                                  'Create Customer Account',
+                              : Text(
+                                  _requestedRole == UserRole.agent
+                                      ? 'Create Agent Account'
+                                      : 'Create Customer Account',
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,

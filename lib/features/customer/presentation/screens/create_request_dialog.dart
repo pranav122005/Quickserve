@@ -5,6 +5,7 @@ import '../../../../core/utils/formatters.dart';
 import '../../../../models/service_request.dart';
 import '../../../../repositories/repository_providers.dart';
 import '../../../../services/audit_service.dart';
+import '../../../../services/geolocation_service.dart';
 import '../controllers/customer_requests_controller.dart';
 import 'customer_mobile_create_request_screen.dart';
 import 'customer_tracking_screen.dart';
@@ -29,8 +30,48 @@ class _CreateRequestDialogState extends ConsumerState<CreateRequestDialog> {
   String? _selectedPresetName;
 
   DateTime? _preferredDateTime;
+  bool _isLocating = false;
   bool _isSubmitting = false;
   String? _formError;
+
+  Future<void> _fetchCurrentLocation() async {
+    setState(() {
+      _isLocating = true;
+      _formError = null;
+    });
+
+    try {
+      final geoService = ref.read(geolocationServiceProvider);
+      final perm = await geoService.requestPermission();
+
+      if (perm == LocationPermissionStatus.granted) {
+        final position = await geoService.getCurrentPosition();
+        if (mounted && position != null) {
+          setState(() {
+            _selectedLat = position.latitude;
+            _selectedLon = position.longitude;
+            _selectedPresetName = 'Live Location';
+            _addressController.text =
+                'Live Location (${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)})';
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Live GPS location captured successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else if (mounted) {
+          setState(() => _formError = 'Could not acquire GPS fix. Please enter your address manually.');
+        }
+      } else if (mounted) {
+        setState(() => _formError = 'Location permission is required to detect live GPS.');
+      }
+    } catch (e) {
+      if (mounted) setState(() => _formError = 'Location error: $e');
+    } finally {
+      if (mounted) setState(() => _isLocating = false);
+    }
+  }
 
   @override
   void initState() {
@@ -309,10 +350,29 @@ class _CreateRequestDialogState extends ConsumerState<CreateRequestDialog> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Swiggy/Flipkart Location Preset Chips
-                        const Text(
-                          'Quick Location Presets',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.grey),
+                        // Swiggy/Flipkart Location Preset Chips & Live Location Button
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Quick Location Presets',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.grey),
+                            ),
+                            TextButton.icon(
+                              onPressed: _isLocating ? null : _fetchCurrentLocation,
+                              icon: _isLocating
+                                  ? const SizedBox(
+                                      width: 14,
+                                      height: 14,
+                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                    )
+                                  : const Icon(Icons.my_location, size: 16, color: Color(0xFF2563EB)),
+                              label: Text(
+                                _isLocating ? 'Detecting...' : 'Use Live Location',
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF2563EB)),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 6),
                         SingleChildScrollView(
@@ -346,10 +406,15 @@ class _CreateRequestDialogState extends ConsumerState<CreateRequestDialog> {
                         // Service Address
                         TextFormField(
                           controller: _addressController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Service Address',
-                            hintText: 'Street address, apartment, city',
-                            prefixIcon: Icon(Icons.location_on_outlined),
+                            hintText: 'Enter street address, landmark, or city',
+                            prefixIcon: const Icon(Icons.location_on_outlined),
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.my_location, color: Color(0xFF2563EB)),
+                              tooltip: 'Autofill Live GPS Location',
+                              onPressed: _isLocating ? null : _fetchCurrentLocation,
+                            ),
                           ),
                           maxLines: 2,
                           validator: (val) {

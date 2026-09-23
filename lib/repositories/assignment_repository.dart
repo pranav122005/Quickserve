@@ -50,9 +50,4 @@ abstract class AssignmentRepository {
     required String agentId,
   });
 
-  /// Agent directly claims and accepts a pending service request.
-  Future<ServiceAssignment> claimPendingRequest({
-    required String requestId,
-    required String agentId,
-  });
 }

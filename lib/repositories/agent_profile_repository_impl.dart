@@ -18,21 +18,9 @@ class AgentProfileRepositoryImpl implements AgentProfileRepository {
         .maybeSingle();
 
     if (response == null) {
-      // If agent profile row does not exist yet, create default
-      try {
-        final inserted = await _supabaseService.client
-            .from(DbTables.agentProfiles)
-            .insert({
-              DbColumns.userId: agentId,
-              DbColumns.serviceRadiusKm: 15.0,
-              DbColumns.availability: AgentAvailability.offline.dbValue,
-            })
-            .select('*, profiles!agent_profiles_user_id_fkey(*)')
-            .single();
-        return AgentProfile.fromMap(inserted);
-      } catch (_) {
-        return null;
-      }
+      // Agent records are provisioned by trusted backend/admin workflows only.
+      // A client must never manufacture an agent profile for the current user.
+      return null;
     }
 
     return AgentProfile.fromMap(response);

@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../models/agent_profile.dart';
 import '../../../../models/service_assignment.dart';
-import '../../../../models/service_request.dart';
 import '../../../../models/payment_record.dart';
 import '../../../../repositories/repository_providers.dart';
 import '../../../auth/presentation/controllers/auth_providers.dart';
@@ -17,7 +16,6 @@ class AgentDashboardState {
   final AgentProfile? agentProfile;
   final ServiceAssignment? activeAssignment;
   final List<ServiceAssignment> incomingOffers;
-  final List<ServiceRequest> openRequests;
   final List<ServiceAssignment> history;
   final String? errorMessage;
 
@@ -26,7 +24,6 @@ class AgentDashboardState {
     this.agentProfile,
     this.activeAssignment,
     this.incomingOffers = const [],
-    this.openRequests = const [],
     this.history = const [],
     this.errorMessage,
   });
@@ -39,7 +36,6 @@ class AgentDashboardState {
     AgentProfile? agentProfile,
     ServiceAssignment? activeAssignment,
     List<ServiceAssignment>? incomingOffers,
-    List<ServiceRequest>? openRequests,
     List<ServiceAssignment>? history,
     String? errorMessage,
   }) {
@@ -48,7 +44,6 @@ class AgentDashboardState {
       agentProfile: agentProfile ?? this.agentProfile,
       activeAssignment: activeAssignment ?? this.activeAssignment,
       incomingOffers: incomingOffers ?? this.incomingOffers,
-      openRequests: openRequests ?? this.openRequests,
       history: history ?? this.history,
       errorMessage: errorMessage,
     );
@@ -58,7 +53,6 @@ class AgentDashboardState {
 class AgentDashboardController extends Notifier<AgentDashboardState> {
   RealtimeChannel? _offersChannel;
   RealtimeChannel? _requestsChannel;
-  final Set<String> _dismissedRequestIds = {};
 
   @override
   AgentDashboardState build() {
@@ -83,13 +77,10 @@ class AgentDashboardController extends Notifier<AgentDashboardState> {
     try {
       final agentProfileRepo = ref.read(agentProfileRepositoryProvider);
       final assignmentRepo = ref.read(assignmentRepositoryProvider);
-      final requestRepo = ref.read(serviceRequestRepositoryProvider);
 
       final profile = await agentProfileRepo.getAgentProfile(user.id);
       final active = await assignmentRepo.getActiveAssignmentForAgent(user.id);
       final offers = await assignmentRepo.getOffersForAgent(user.id);
-      final allOpenReqs = await requestRepo.getAllRequests(statusFilter: RequestStatus.pending);
-      final openReqs = allOpenReqs.where((r) => !_dismissedRequestIds.contains(r.id)).toList();
       final history = await assignmentRepo.getAgentAssignmentHistory(user.id);
 
       state = AgentDashboardState(
@@ -97,7 +88,6 @@ class AgentDashboardController extends Notifier<AgentDashboardState> {
         agentProfile: profile,
         activeAssignment: active,
         incomingOffers: offers,
-        openRequests: openReqs,
         history: history,
       );
 
@@ -136,12 +126,6 @@ class AgentDashboardController extends Notifier<AgentDashboardState> {
         loadAgentData();
       },
     );
-  }
-
-  void dismissPendingRequest(String requestId) {
-    _dismissedRequestIds.add(requestId);
-    final updatedOpen = state.openRequests.where((r) => r.id != requestId).toList();
-    state = state.copyWith(openRequests: updatedOpen);
   }
 
   Future<bool> setAvailability(bool available) async {
@@ -189,20 +173,7 @@ class AgentDashboardController extends Notifier<AgentDashboardState> {
     final user = ref.read(authRepositoryProvider).currentUser;
     try {
       final dispatchService = ref.read(dispatchServiceProvider);
-      try {
-        await dispatchService.acceptOffer(assignmentId);
-      } on ServiceException {
-        // Authoritative backend rejection (e.g. offer_expired, already processed) - preserve decision
-        rethrow;
-      } catch (_) {
-        // Fallback to direct repository update if RPC is pending in local test env
-        final repo = ref.read(assignmentRepositoryProvider);
-        await repo.acceptOffer(
-          assignmentId: assignmentId,
-          requestId: requestId,
-          agentId: user?.id,
-        );
-      }
+      await dispatchService.acceptOffer(assignmentId);
 
       // Authoritative backend reload will verify assignment status and start GPS if authorized
       await loadAgentData();
@@ -222,51 +193,11 @@ class AgentDashboardController extends Notifier<AgentDashboardState> {
     }
   }
 
-  Future<bool> claimPendingRequest(String requestId) async {
-    final user = ref.read(authRepositoryProvider).currentUser;
-    if (user == null) return false;
-
-    try {
-      final repo = ref.read(assignmentRepositoryProvider);
-      final assignment = await repo.claimPendingRequest(
-        requestId: requestId,
-        agentId: user.id,
-      );
-
-      ref.read(auditServiceProvider).logRequestAssigned(
-        requestId,
-        user.id,
-        assignmentId: assignment.id,
-      );
-
-      await loadAgentData();
-      return true;
-    } catch (e) {
-      final message = ErrorHandler.getUserMessage(e);
-      state = state.copyWith(errorMessage: message);
-      await loadAgentData();
-      return false;
-    }
-  }
-
   Future<bool> rejectOffer(String assignmentId, String requestId) async {
     final user = ref.read(authRepositoryProvider).currentUser;
     try {
       final dispatchService = ref.read(dispatchServiceProvider);
-      try {
-        await dispatchService.rejectOffer(assignmentId);
-      } on ServiceException {
-        // Authoritative backend rejection - preserve decision
-        rethrow;
-      } catch (_) {
-        // Fallback to direct repo update
-        final repo = ref.read(assignmentRepositoryProvider);
-        await repo.rejectOffer(
-          assignmentId: assignmentId,
-          requestId: requestId,
-          agentId: user?.id,
-        );
-      }
+      await dispatchService.rejectOffer(assignmentId);
       await loadAgentData();
       return true;
     } catch (e) {

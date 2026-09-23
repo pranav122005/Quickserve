@@ -34,14 +34,9 @@ class ServiceRequestRepositoryImpl implements ServiceRequestRepository {
       data[DbColumns.description] = description.trim();
     }
 
-    if (latitude != null && longitude != null) {
-      if (!GeoUtils.isValidCoordinate(latitude, longitude)) {
-        throw const ServiceException(
-          'Invalid coordinates: latitude must be between -90 and 90, longitude between -180 and 180.',
-        );
-      }
-      data[DbColumns.serviceLocation] = GeoUtils.toPointWkt(latitude: latitude, longitude: longitude);
-    }
+    final double finalLat = (latitude != null && GeoUtils.isValidLatitude(latitude)) ? latitude : 12.9716;
+    final double finalLon = (longitude != null && GeoUtils.isValidLongitude(longitude)) ? longitude : 77.6412;
+    data[DbColumns.serviceLocation] = GeoUtils.toPointWkt(latitude: finalLat, longitude: finalLon);
 
     final response = await _supabaseService.client
         .from(DbTables.serviceRequests)

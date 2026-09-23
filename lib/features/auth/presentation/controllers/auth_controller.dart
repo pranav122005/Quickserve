@@ -9,6 +9,7 @@ import '../../../../repositories/repository_providers.dart';
 import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../services/audit_service.dart';
+import '../../../../models/user_role.dart';
 
 /// Manages authentication state, user session restoration, and profile loading.
 class AuthController extends Notifier<AppAuthState> {
@@ -114,6 +115,7 @@ class AuthController extends Notifier<AppAuthState> {
     required String email,
     required String password,
     required String fullName,
+    required UserRole requestedRole,
     String? phone,
   }) async {
     state = AppAuthState.loading();
@@ -122,6 +124,7 @@ class AuthController extends Notifier<AppAuthState> {
         email: email,
         password: password,
         fullName: fullName,
+        requestedRole: requestedRole,
         phone: phone,
       );
 

@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../models/user_role.dart';
 
 /// Contract for authentication operations in QuickServe.
 abstract class AuthRepository {
@@ -10,12 +11,13 @@ abstract class AuthRepository {
 
   /// Registers a new user account.
   /// 
-  /// Only standard profile metadata (full name, optional phone) is submitted.
-  /// Role assignment is strictly governed by the database trigger (defaults to customer).
+  /// Only customer and agent signup requests are allowed. Admins are provisioned
+  /// manually in the database and can never be selected by the client.
   Future<AuthResponse> signUp({
     required String email,
     required String password,
     required String fullName,
+    required UserRole requestedRole,
     String? phone,
   });
 

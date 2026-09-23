@@ -86,7 +86,9 @@ class CustomerRequestsController extends Notifier<CustomerRequestsState> {
 
       try {
         await ref.read(dispatchServiceProvider).dispatchRequest(created.id);
-      } catch (_) {}
+      } catch (e) {
+        // Non-fatal: automatic database trigger will also attempt dispatch
+      }
 
       await loadRequests();
       return created;

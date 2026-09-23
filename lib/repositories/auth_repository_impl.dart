@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'auth_repository.dart';
+import '../models/user_role.dart';
 import '../services/supabase_service.dart';
 
 /// Concrete implementation of [AuthRepository] backed by Supabase Auth.
@@ -24,11 +25,13 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
     required String fullName,
+    required UserRole requestedRole,
     String? phone,
   }) async {
     // Only pass standard user metadata (full name, optional phone). Role is forced server-side.
     final data = <String, dynamic>{
       'full_name': fullName.trim(),
+      'requested_role': requestedRole == UserRole.agent ? 'agent' : 'customer',
     };
     if (phone != null && phone.trim().isNotEmpty) {
       data['phone'] = phone.trim();
