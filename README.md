@@ -351,7 +351,7 @@ Detailed security architecture details can be found in [docs/SECURITY.md](docs/S
 
 ---
 
-## ✦ Screens / Visuals
+
 
 <p align="center">
   <img src="docs/assets/quickserve-hero.png" alt="QuickServe Application Showcase" width="90%">
