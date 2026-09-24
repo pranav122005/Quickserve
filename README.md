@@ -1,491 +1,478 @@
-⚡ QuickServe
+<div align="center">
 
-<p align="center">
-  <img src="docs/assets/quickserve-hero.png" alt="QuickServe" width="850" />
+⚡ QUICKSERVE
+
+Smart Local Service Request & Dispatch Platform
+
+Book. Dispatch. Track. Complete.
+
+A full-stack service management platform connecting customers, service agents, and administrators through a secure, real-time workflow.
+
+<p>
+<img src="https://img.shields.io/badge/Flutter-3.47.5-02569B?style=for-the-badge&logo=flutter&logoColor=white">
+<img src="https://img.shields.io/badge/Dart-3.13.4-0175C2?style=for-the-badge&logo=dart&logoColor=white">
+<img src="https://img.shields.io/badge/Supabase-Backend-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white">
+<img src="https://img.shields.io/badge/PostgreSQL-Database-336791?style=for-the-badge&logo=postgresql&logoColor=white">
 </p>
 
-<p align="center">
-  <strong>Service Request Management Platform</strong><br/>
-  Flutter • Supabase • PostgreSQL • PostGIS • Realtime
+<p>
+<img src="https://img.shields.io/badge/PostGIS-Spatial_Dispatch-336791?style=for-the-badge&logo=postgresql&logoColor=white">
+<img src="https://img.shields.io/badge/Riverpod-State_Management-6C63FF?style=for-the-badge">
+<img src="https://img.shields.io/badge/Tests-83%2F83-success?style=for-the-badge">
+<img src="https://img.shields.io/badge/Platform-Android_%7C_Web-informational?style=for-the-badge">
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Flutter-3.47.5-02569B?logo=flutter" alt="Flutter" />
-  <img src="https://img.shields.io/badge/Dart-3.13.4-0175C2?logo=dart" alt="Dart" />
-  <img src="https://img.shields.io/badge/Supabase-Backend-3ECF8E?logo=supabase" alt="Supabase" />
-  <img src="https://img.shields.io/badge/PostgreSQL-PostGIS-336791?logo=postgresql" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/Platform-Android%20%7C%20Web-34A853" alt="Platforms" />
+<p>
+<a href="#-overview">Overview</a> •
+<a href="#-features">Features</a> •
+<a href="#-how-it-works">How It Works</a> •
+<a href="#-architecture">Architecture</a> •
+<a href="#-security">Security</a> •
+<a href="#-setup">Setup</a> •
+<a href="#-testing">Testing</a>
 </p>
 
-📌 Overview
+</div>
 
-QuickServe is a full-stack service request management application designed for customers, service agents, and administrators.
+🖼️ Product Preview
 
-Customers can create and track service requests, agents can receive and manage nearby jobs, and administrators can manage operations through a responsive web portal.
+<p align="center">
+  <img src="docs/assets/quickserve-preview.png" alt="QuickServe Preview" width="900">
+</p>
 
-The application uses Supabase Auth, PostgreSQL, PostGIS, Row Level Security (RLS), Realtime, and Flutter to provide a shared backend for the customer mobile experience and admin/agent web experience.
+<p align="center"><sub>Customer • Agent • Administrator workflows</sub></p>
+
+🚀 Overview
+
+QuickServe is a full-stack Service Request Management Platform designed for local services such as:
+
+❄️ AC servicing
+
+🔧 Plumbing
+
+⚡ Electrical work
+
+🧹 Cleaning
+
+The platform provides three connected experiences:
+
+Role
+
+Main Responsibility
+
+👤 Customer
+
+Create, track and manage service requests
+
+🛠️ Service Agent
+
+Receive offers, perform assigned jobs and update progress
+
+🧑‍💼 Administrator
+
+Monitor operations, assign agents and manage requests
+
+QuickServe uses Flutter for Android and the web administration portal, with Supabase, PostgreSQL, PostGIS, RLS and Realtime providing the backend foundation.
 
 ✨ Why QuickServe?
 
-Problem
+QuickServe is built around one simple operational flow:
 
-QuickServe Solution
+Customer Request
+       ↓
+Backend Dispatch
+       ↓
+Agent Offer
+       ↓
+Agent Accepts
+       ↓
+Service Starts
+       ↓
+Service Completed
+       ↓
+Payment Recorded
+       ↓
+Admin Verification
 
-Customers need to request services easily
+The important part is that authorization and dispatch decisions are enforced by the backend, rather than relying only on what the client application displays.
 
-Guided service-request creation
+📋 Table of Contents
 
-Requests need operational assignment
+Overview
 
-Location-aware PostGIS dispatch
+Why QuickServe
 
-Agents need nearby work
+Features
 
-Radius-based offer system
+How It Works
 
-Customers need status visibility
+Request Lifecycle
 
-Realtime request updates
+Smart Dispatch
 
-Admins need operational control
+Location & Privacy
 
-Web dashboard and assignment tools
+Architecture
 
-Sensitive data needs protection
+Technology Stack
 
-Supabase Auth + PostgreSQL RLS
+Database
 
-👥 User Roles
+Security
 
-Customer 👤
+Application Flows
 
-Service Agent 🛠️
+Project Structure
 
-Administrator 🖥️
+Setup
 
-Register / login
+Testing
 
-Login
+Demo Accounts
 
-Login
+Release & Hosting
+
+Documentation
+
+Implementation Status
+
+Future Improvements
+
+License
+
+✨ Features
+
+<table>
+<tr>
+<td width="33%" valign="top">
+
+👤 Customer
+
+Registration & login
 
 Browse services
 
-Set service radius
+Create service requests
 
-Dashboard
+Preferred date & time
 
-Create requests
+Address & priority
 
-Online / offline
+Unique request ID
 
-Manage requests
+Request tracking
 
-Track requests
+Status history
 
-Receive offers
+Eligible cancellation
 
-Assign agents
+Assigned-agent visibility
 
-View assigned agent
+Active agent location
+
+Payment tracking
+
+Profile & logout
+
+</td>
+<td width="33%" valign="top">
+
+🛠️ Service Agent
+
+Secure login
+
+Agent profile
+
+Online / offline status
+
+Configurable 10–20 km service radius
+
+Job offers
+
+120-second offer window
 
 Accept / reject
 
-Manage customers
+Start service
 
-Cancel eligible requests
+Add work notes
 
-Start / complete jobs
-
-Manage agents
-
-Track payment record
+Complete service
 
 Record payment
 
-View operational activity
+Active-job location
 
-🔄 Request Lifecycle
+</td>
+<td width="33%" valign="top">
 
-┌─────────┐     ┌────────────┐     ┌──────────┐
-│ PENDING │ ──▶ │ DISPATCHING│ ──▶ │ ASSIGNED │
-└─────────┘     └────────────┘     └────┬─────┘
-                                         │
-                                         ▼
-                                  ┌─────────────┐
-                                  │ IN_PROGRESS │
-                                  └──────┬──────┘
-                                         │
-                                         ▼
-                                  ┌───────────┐
-                                  │ COMPLETED │
-                                  └───────────┘
+🧑‍💼 Administrator
 
-                 └──── eligible requests ────▶ CANCELLED
+Responsive web dashboard
 
-Each important transition is stored in the request status history so the operational flow remains traceable.
+Request management
 
-🧭 How It Works
+Customer management
 
-1. Customer creates a request
+Agent management
 
-The customer selects a service, enters the required details, preferred time, address, and priority.
+Manual agent assignment
 
-A unique request ID is generated in the format:
+Request status management
+
+Agent operational tracking
+
+Payment records
+
+Activity / status history
+
+</td>
+</tr>
+</table>
+
+🔄 How It Works
+
+1. Customer Creates a Request
+
+The customer selects a service and provides:
+
+Service Type
+Description
+Preferred Date / Time
+Service Address
+Priority
+
+A unique request identifier is generated, for example:
 
 REQ-2026-000123
 
-2. Backend finds eligible agents
+2. Backend Finds Eligible Agents
 
-The backend evaluates:
+The backend evaluates agents using:
 
-Current agent location
+Current location
 
-Configured service radius
+Service radius
 
-Online availability
+Availability
 
 Verification status
 
+Service capability
+
 Current workload
 
-Operational capability
+3. Agent Receives an Offer
 
-PostGIS performs the geographic filtering.
+The selected agent receives a real-time offer with a 120-second acceptance window.
 
-3. Agent receives an offer
+        REQUEST
+           │
+           ▼
+    Eligible Agents
+           │
+           ▼
+      Best Candidate
+           │
+           ▼
+     120s Offer
+       /       \
+   ACCEPT     REJECT/EXPIRE
+      │             │
+      ▼             ▼
+   ASSIGNED     Next Candidate
 
-The selected agent receives a time-limited offer. The current implementation uses a 120-second offer window.
+4. Service Is Performed
 
-If the offer is rejected or expires, the backend can continue dispatching to another eligible candidate.
+After acceptance:
 
-4. Agent accepts and starts the job
+ASSIGNED
+   ↓
+IN_PROGRESS
+   ↓
+COMPLETED
 
-After acceptance, the request becomes assigned. When work starts, the request moves to IN_PROGRESS.
+The customer can see the assigned agent's current location during the active authorized service state.
 
-5. Customer receives live progress
+🔁 Request Lifecycle
 
-Supabase Realtime updates the relevant request state without requiring the customer to repeatedly refresh the application.
+┌───────────┐
+│  PENDING  │
+└─────┬─────┘
+      ↓
+┌──────────────┐
+│ DISPATCHING  │
+└─────┬────────┘
+      ↓
+┌────────────┐
+│  ASSIGNED  │
+└─────┬──────┘
+      ↓
+┌──────────────┐
+│ IN_PROGRESS  │
+└─────┬────────┘
+      ↓
+┌────────────┐
+│ COMPLETED  │
+└────────────┘
 
-6. Job completion and payment record
+Eligible requests
+      │
+      └──────────► CANCELLED
 
-The agent completes the request and records the payment information. The current payment implementation is payment recording/audit, not an online payment gateway.
+Assignment States
 
-🏗️ Architecture
-
-High-Level Architecture
-
-flowchart TB
-    C[Customer<br/>Flutter Android] --> A[Supabase Auth]
-    G[Agent<br/>Flutter Web / Android] --> A
-    AD[Administrator<br/>Flutter Web] --> A
-
-    C --> API[Supabase Backend]
-    G --> API
-    AD --> API
-
-    API --> DB[(PostgreSQL)]
-    DB --> GIS[(PostGIS)]
-    API --> RT[Supabase Realtime]
-
-    RT --> C
-    RT --> G
-    RT --> AD
-
-Architecture in simple terms
-
-Flutter clients → communicate with → Supabase → which securely manages → database, authentication, authorization, dispatch and realtime updates.
-
-The clients do not directly implement privileged database operations. Authorization is enforced by the backend/database layer.
-
-🧩 Main Components
-
-Component
-
-Responsibility
-
-Flutter
-
-Customer, agent and admin interfaces
-
-Riverpod
-
-Application state management
-
-go_router
-
-Navigation and protected routes
-
-Supabase Auth
-
-Login, registration, sessions and password reset
-
-PostgreSQL
-
-Core application data
-
-PostGIS
-
-Location and radius-based dispatch
-
-RLS
-
-Database-level authorization
-
-Supabase Realtime
-
-Live request/assignment updates
-
-flutter_map + OSM
-
-Map visualization
-
-geolocator
-
-Foreground device location
-
-🗄️ Database Model
-
-erDiagram
-    PROFILES ||--o| AGENT_PROFILES : has
-    PROFILES ||--o{ SERVICE_REQUESTS : creates
-    SERVICE_REQUESTS ||--o{ SERVICE_ASSIGNMENTS : receives
-    SERVICE_REQUESTS ||--o{ REQUEST_STATUS_HISTORY : tracks
-    SERVICE_REQUESTS ||--o{ PAYMENTS : records
-    PROFILES ||--o{ AGENT_LOCATIONS : reports
-
-    PROFILES {
-        uuid id PK
-        user_role role
-    }
-
-    SERVICE_REQUESTS {
-        uuid id PK
-        text request_id
-        uuid customer_id FK
-        text status
-        text priority
-    }
-
-    SERVICE_ASSIGNMENTS {
-        uuid id PK
-        uuid request_id FK
-        uuid agent_id FK
-        text status
-    }
-
-    REQUEST_STATUS_HISTORY {
-        uuid id PK
-        uuid request_id FK
-        text status
-        timestamp created_at
-    }
-
-    PAYMENTS {
-        uuid id PK
-        uuid request_id FK
-        numeric amount
-    }
-
-Core data areas
-
-Profiles — application users and their roles.
-
-Agent Profiles — agent-specific operational configuration.
-
-Service Requests — customer service requests and lifecycle state.
-
-Service Assignments — agent offers and assignments.
-
-Agent Locations — current operational location.
-
-Request Status History — lifecycle history.
-
-Payments — payment records associated with completed work.
-
-The project uses an equivalent operational activity/history model rather than a separate audit_logs table.
-
-📍 Smart Dispatch
-
-QuickServe performs dispatch on the backend rather than trusting the Flutter client.
-
-New Request
+OFFERED → ACCEPTED → COMPLETED
     │
-    ▼
-Find available agents
-    │
-    ▼
-Apply service-radius filter
-    │
-    ▼
-Verify eligibility
-    │
-    ▼
-Rank candidates
-    │
-    ▼
-Reserve candidate atomically
-    │
-    ▼
-Create 120-sec offer
-    │
-    ├── Accept ──▶ Assignment
-    │
-    └── Reject/Expire ──▶ Next candidate
+    ├──────► REJECTED
+    └──────► CANCELLED
 
-Candidate ranking
+🧠 Smart Dispatch
 
-The implemented hybrid ordering considers:
+QuickServe performs dispatch on the backend using PostgreSQL + PostGIS.
 
-Lower workload
+Candidate Eligibility
 
-Shorter distance
+An agent must satisfy the applicable conditions:
 
-Stable agent_id tie-breaker
+Condition
 
-Database locking with FOR UPDATE SKIP LOCKED helps prevent two concurrent dispatch operations from reserving the same agent incorrectly.
+Purpose
+
+📍 Within radius
+
+Agent is geographically reachable
+
+🟢 Available
+
+Agent can receive work
+
+✅ Verified
+
+Agent is authorized to provide service
+
+🛠️ Suitable
+
+Agent can handle the requested service
+
+📡 Current location
+
+Spatial matching can be performed
+
+Candidate Ordering
+
+Eligible agents are ordered deterministically by:
+
+1. Lower active workload
+2. Shorter distance
+3. Agent ID as tie-breaker
+
+Concurrency Safety
+
+The dispatcher uses PostgreSQL row locking with:
+
+FOR UPDATE SKIP LOCKED
+
+This helps prevent two concurrent dispatch attempts from reserving the same offer slot incorrectly.
 
 📍 Location & Privacy
 
-QuickServe deliberately limits location exposure.
-
-Customer
-
-Customer location access to the active agent becomes available only after an authorized assignment state is reached.
-
-Agent
-
-The current implementation uses foreground GPS tracking for active jobs.
-
-Admin
-
-Administrators can access operational agent location information required for dispatch and management.
-
-Privacy principles
-
-Current operational location is used instead of unlimited GPS history.
-
-Location visibility depends on authorization and request state.
-
-Terminal requests no longer expose active-job location.
-
-No fake GPS coordinates are used as a production fallback.
-
-No background/headless GPS service is required by the current implementation.
-
-🔐 Security
-
-QuickServe treats the database as a security boundary rather than relying only on UI restrictions.
+QuickServe intentionally limits location visibility.
 
 User
- │
- ▼
-Supabase Auth
- │
- ▼
-Authenticated Session
- │
- ▼
-PostgreSQL RLS
- │
- ├── Customer → Own requests
- │
- ├── Agent    → Assigned work
- │
- └── Admin    → Authorized operational data
- │
- ▼
-Database Operation
 
-Security controls
+Location Access
 
-Supabase Authentication
+👤 Customer
 
-Backend/database role authorization
+Assigned agent during an active authorized service
 
-PostgreSQL Row Level Security
+🛠️ Agent
 
-Forced RLS on protected tables
+Own current location
 
-SECURITY DEFINER helper functions where required
+🧑‍💼 Administrator
 
-Controlled function search_path
+Operational agent visibility
 
-Authenticated-only grants for protected operations
+Other customers
 
-No service-role key in the Flutter client
+❌ No access
 
-Customer-only public registration
+Anonymous users
 
-Agent/admin accounts provisioned separately
+❌ No access
 
-Secrets excluded from Git
+Location Design
 
-Sensitive information excluded from operational logs
+Foreground GPS is used for active service workflows.
 
-For detailed controls, see docs/SECURITY.md.
+Current agent location is stored for operational tracking.
 
-For the full architecture, see docs/ARCHITECTURE.md.
+Unlimited historical GPS tracking is not used.
 
-📱 Application Experience
+Production workflows do not rely on fake GPS coordinates.
 
-Customer
+Customer access is state-dependent and ends when the relevant service relationship ends.
 
-Login
-  ↓
-Home
-  ↓
-Services
-  ↓
-Create Request
-  ↓
-My Requests
-  ↓
-Request Details
-  ↓
-Live Status / Agent Location
+🏗️ Architecture
 
-Agent
+                         QUICK SERVE
+                              │
+             ┌────────────────┴────────────────┐
+             │                                 │
+      Flutter Android                    Flutter Web
+       Customer / Agent                  Admin Portal
+             │                                 │
+             └────────────────┬────────────────┘
+                              │
+                    Riverpod + go_router
+                              │
+                              ▼
+                       Supabase Client
+                              │
+             ┌────────────────┼────────────────┐
+             │                │                │
+         Supabase Auth       RLS          Realtime
+             │                │                │
+             └────────────────┼────────────────┘
+                              ▼
+                     PostgreSQL Database
+                              │
+                         ┌────┴────┐
+                         │ PostGIS │
+                         └────┬────┘
+                              │
+                       Dispatch RPCs
+                              │
+                              ▼
+                       Agent Assignment
 
-Login
-  ↓
-Agent Home
-  ↓
-Offers
-  ↓
-Accept
-  ↓
-Active Job
-  ↓
-Start Work
-  ↓
-Complete
-  ↓
-Payment Record
+Architecture Principles
 
-Administrator
+Backend-authoritative security — the client cannot grant itself privileges.
 
-Login
-  ↓
-Dashboard
-  ↓
-Requests
-  ├── Search / Filter
-  ├── View Details
-  ├── Assign Agent
-  └── Update Status
-       ↓
-Customers / Agents / Activity
+Database-enforced authorization — RLS protects data at the PostgreSQL layer.
 
-🛠️ Technology Stack
+Spatial dispatch — PostGIS handles distance-based agent matching.
+
+Realtime operations — Supabase Realtime keeps request/offer state synchronized.
+
+Shared backend — Android and Web use the same backend rules and data model.
+
+🧰 Technology Stack
 
 Layer
 
 Technology
 
-Mobile / Web UI
+Mobile
 
 Flutter
+
+Web Admin
+
+Flutter Web
 
 Language
 
@@ -495,7 +482,7 @@ State Management
 
 Riverpod
 
-Routing
+Navigation
 
 go_router
 
@@ -515,6 +502,10 @@ Spatial Database
 
 PostGIS
 
+Authorization
+
+PostgreSQL RLS
+
 Realtime
 
 Supabase Realtime
@@ -523,103 +514,369 @@ Maps
 
 flutter_map + OpenStreetMap
 
-Location
+GPS
 
 geolocator
+
+Testing
+
+Flutter Test
 
 Source Control
 
 Git + GitHub
 
-Web Hosting
+Hosting Configuration
 
-Firebase Hosting configuration
+Firebase Hosting
+
+🗄️ Database
+
+The main operational data is organized around users, requests, assignments, agents, locations, payments and status history.
+
+profiles
+   │
+   ├──────────────┐
+   │              │
+   ▼              ▼
+service_requests  agent_profiles
+   │
+   ├───────────────┐
+   │               │
+   ▼               ▼
+assignments     status_history
+   │
+   ▼
+agent_locations
+
+service_requests
+       │
+       ▼
+    payments
+
+Important Data Areas
+
+Data
+
+Purpose
+
+profiles
+
+User identity and authoritative application role
+
+service_requests
+
+Customer service requests
+
+service_assignments
+
+Agent offers and assignments
+
+agent_profiles
+
+Agent operational profile
+
+agent_locations
+
+Current agent location
+
+request_status_history
+
+Request lifecycle history
+
+payments
+
+Payment records for completed service workflows
+
+PostGIS spatial indexes and database functions support location-aware dispatch.
+
+🔐 Security
+
+QuickServe follows a backend-enforced RBAC + RLS model.
+
+User
+ │
+ ▼
+Supabase Auth
+ │
+ ▼
+Authenticated Session
+ │
+ ▼
+Authoritative Profile Role
+ │
+ ▼
+PostgreSQL RLS
+ │
+ ├── Customer Data
+ ├── Agent Data
+ └── Admin Operations
+
+Role Provisioning
+
+Public Registration
+        │
+        ▼
+     CUSTOMER
+        │
+        ├───────────────┐
+        │               │
+        ▼               ▼
+     AGENT            ADMIN
+  provisioned       provisioned
+   separately        separately
+
+A client-side role switcher is not used to grant privileged access.
+
+Database Security Controls
+
+Supabase Authentication
+
+PostgreSQL Row Level Security
+
+Forced RLS on protected tables
+
+SECURITY DEFINER helper functions where required
+
+Controlled search_path
+
+Authenticated-only database access
+
+Server-side dispatch authorization
+
+Restricted agent-location visibility
+
+No service-role key in the Flutter client
+
+Secrets excluded from Git
+
+Sensitive values are not written to logs
+
+Protected Resources
+
+profiles
+service_requests
+service_assignments
+agent_profiles
+agent_locations
+request_status_history
+payments
+
+📝 Logging & Error Handling
+
+The system records meaningful operational events while avoiding sensitive information.
+
+Examples include:
+
+LOGIN_SUCCESS
+REQUEST_CREATED
+REQUEST_ASSIGNED
+REQUEST_UPDATED
+AUTHORIZATION_FAILED
+DATABASE_ERROR
+
+Sensitive information such as passwords, authentication tokens, API keys and database secrets is not intended for application logs.
+
+Application flows also handle:
+
+Invalid input
+
+Unauthorized actions
+
+Network failures
+
+Backend/database errors
+
+Session expiry
+
+Realtime interruptions
+
+📱 Application Flows
+
+Customer
+
+Login / Register
+       ↓
+     Home
+       ├── Services
+       ├── Create Request
+       └── My Requests
+                ↓
+          Request Details
+                ↓
+       Assignment / Location
+                ↓
+          Payment Record
+
+Agent
+
+Login
+  ↓
+Agent Home
+  ├── Availability
+  ├── Service Radius
+  ├── Offers
+  └── Active Job
+          ↓
+      Start Service
+          ↓
+       Complete
+          ↓
+    Record Payment
+
+Administrator
+
+Admin Login
+     ↓
+ Dashboard
+     ├── Requests
+     ├── Customers
+     ├── Agents
+     └── Payments
+            ↓
+      Request Details
+       ├── Assign Agent
+       ├── Update Status
+       └── Track Agent
+
+📂 Project Structure
+
+Quickserve/
+├── android/
+├── ios/
+├── web/
+├── lib/
+│   ├── core/
+│   ├── data/
+│   ├── features/
+│   │   ├── auth/
+│   │   ├── customer/
+│   │   ├── agent/
+│   │   └── admin/
+│   └── main.dart
+├── supabase/
+│   └── migrations/
+├── test/
+├── docs/
+│   ├── assets/
+│   ├── ARCHITECTURE.md
+│   └── SECURITY.md
+├── .env.example
+├── .gitignore
+├── firebase.json
+├── pubspec.yaml
+└── README.md
 
 ⚙️ Setup
 
-Prerequisites
+1. Prerequisites
 
-Install Flutter, Dart, Android Studio/Android SDK and Git.
+Install:
+
+Flutter
+
+Dart
+
+Android Studio / Android SDK
+
+Git
+
+A Supabase project
+
+Verify Flutter:
 
 flutter --version
 flutter doctor
 
-Clone
+2. Clone Repository
 
 git clone https://github.com/pranav122005/Quickserve.git
 cd Quickserve
 
-Install dependencies
+3. Install Dependencies
 
 flutter pub get
 
-Environment
+4. Configure Environment
 
 Create .env from .env.example:
 
 SUPABASE_URL=your_supabase_project_url
 SUPABASE_ANON_KEY=your_public_anon_or_publishable_key
 
-Never place a service_role key, database password, or other secret in the Flutter client.
+Important: Never place a service_role key, database password, or other secret inside the Flutter client.
 
-Run Web
+5. Configure Database
+
+Apply the project's Supabase migrations and ensure the required:
+
+PostgreSQL database
+
+PostGIS extension
+
+Authentication
+
+RLS policies
+
+Dispatch functions
+
+Indexes
+
+Realtime configuration
+
+are available.
+
+6. Run Web
 
 flutter run -d chrome
 
-Run Android
+7. Run Android
 
 flutter devices
 flutter run
 
-🧪 Testing & Quality
+🧪 Testing
+
+Run static analysis:
 
 flutter analyze
+
+Run tests:
+
 flutter test
 
-Current project baseline:
+Current Baseline
 
 Flutter Analyze : 0 issues
 Flutter Tests   : 83 / 83 passing
 
-End-to-end workflow
+End-to-End Validation Flow
 
+Customer Registration
+        ↓
 Customer Login
-      ↓
+        ↓
 Create Request
-      ↓
+        ↓
 Backend Dispatch
-      ↓
+        ↓
 Agent Offer
-      ↓
+        ↓
 Agent Accept
-      ↓
-Start Job
-      ↓
-Complete Job
-      ↓
-Record Payment
-      ↓
+        ↓
+Agent Start
+        ↓
+Agent Complete
+        ↓
+Payment Record
+        ↓
 Admin Verification
 
-The project also includes authorization, dispatch concurrency, location privacy, authentication/session and regression coverage.
+The project also includes authorization, dispatch-concurrency, location-privacy, authentication/session, network/realtime and regression coverage.
 
-🚀 Release & Hosting
+👥 Demo Accounts
 
-The project includes:
-
-Android release build
-
-Flutter Web build
-
-Firebase Hosting configuration
-
-Supabase production backend configuration
-
-Environment-based configuration
-
-A live public URL is not listed here because deployment status should be verified from the current hosting environment rather than assumed from configuration.
-
-👤 Demo Accounts
+These accounts are intended for demonstration/testing. Replace them before public production use.
 
 Role
 
@@ -645,9 +902,32 @@ admin@quickserve.com
 
 QuickServe@123
 
-These credentials are intended for demonstration/testing. Replace them before public production use.
+📦 Release & Hosting
+
+Android
+
+A release APK has been generated and validated as part of the project release process.
+
+Android Release APK
+~57.9 MB
+
+Web
+
+The project includes a Flutter Web release build and Firebase Hosting configuration.
+
+Typical build:
+
+flutter build web --release
+
+Typical deployment:
+
+firebase deploy --only hosting
+
+A public production URL is not listed here because the live deployment must be verified from the current hosting environment rather than assumed from configuration.
 
 📚 Documentation
+
+Detailed project documentation is available in:
 
 Document
 
@@ -655,106 +935,141 @@ Purpose
 
 docs/ARCHITECTURE.md
 
-System architecture, data flow and design decisions
+System architecture, components, data flow and design decisions
 
 docs/SECURITY.md
 
-Authentication, RLS, authorization and privacy controls
+Authentication, RBAC, RLS, authorization and location privacy
 
-📂 Project Structure
 
-Quickserve/
-├── android/
-├── lib/
-│   ├── core/
-│   ├── features/
-│   ├── routing/
-│   └── main.dart
-├── supabase/
-│   └── migrations/
-├── test/
-├── docs/
-│   ├── assets/
-│   ├── ARCHITECTURE.md
-│   └── SECURITY.md
-├── .env.example
-├── .gitignore
-├── firebase.json
-├── pubspec.yaml
-└── README.md
+🤝 Git Workflow
 
-🏁 Implementation Status
+Feature
+  ↓
+Feature Branch
+  ↓
+Implementation
+  ↓
+flutter analyze
+  ↓
+flutter test
+  ↓
+Manual E2E
+  ↓
+Pull Request
+  ↓
+Review
+  ↓
+main
 
-Area
+Example commit style:
 
-Status
+feat: add agent offer workflow
+fix: resolve RLS recursion
+fix: repair agent availability
+test: add authorization coverage
+docs: update deployment guide
+
+📸 Visual Assets
+
+Recommended assets are stored under:
+
+docs/assets/
+
+Example:
+
+docs/assets/
+├── quickserve-hero.png
+├── quickserve-logo.jpg
+├── quickserve-preview.png
+├── customer-dashboard.png
+├── create-request.png
+├── agent-dashboard.png
+├── agent-offer.png
+└── admin-dashboard.png
+
+For a GitHub README, screenshots can be displayed using standard Markdown or HTML image blocks.
+
+📌 Assignment Alignment
+
+QuickServe covers the major SWASIQ technical assignment areas:
+
+Assignment Area
+
+QuickServe Implementation
+
+Flutter application
+
+Flutter Android
+
+Web administration
+
+Flutter Web
+
+Backend
+
+Supabase
+
+Database
+
+PostgreSQL
 
 Authentication
 
-✅
+Supabase Auth
+
+RBAC
+
+Backend role + RLS
 
 Customer workflow
 
-✅
+Request creation & tracking
 
 Agent workflow
 
-✅
+Offer, accept, start, complete
 
-Admin portal
+Admin workflow
 
-✅
+Dashboard, assignment & management
 
-RBAC / RLS
+Spatial dispatch
 
-✅
+PostGIS
 
-PostGIS dispatch
+Realtime
 
-✅
+Supabase Realtime
 
-Realtime updates
+Audit/history
 
-✅
+Request status history + operational events
 
-Active-job location
+Error handling
 
-✅
-
-Payment recording
-
-✅
-
-Password reset
-
-✅
+Client/backend error handling
 
 Testing
 
-✅
+Automated + E2E validation
 
-Android release build
+Documentation
 
-✅
-
-Web build
-
-✅
-
-Production public deployment
-
-⏳
-
-Push notifications
-
-Future
-
-Advanced analytics
-
-Future
+README + architecture + security docs
 
 📄 License
 
 This project was developed as a technical assignment for SWASIQ.
 
-© 2026 QuickServe. All rights reserved
+© 2026 QuickServe. All rights reserved.
+
+<div align="center">
+
+⚡ QuickServe
+
+Secure • Realtime • Location-Aware • Service Management
+
+Customer • Agent • Administrator
+
+</div>
