@@ -1,10 +1,4 @@
-```{=html}
-<p align="center">
-```
-`<img src="docs/assets/quickserve-hero.png" alt="QuickServe Application Showcase" width="90%">`{=html}
-```{=html}
-</p>
-```
+
 ```{=html}
 <p align="center">
 ```
