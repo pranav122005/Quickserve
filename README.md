@@ -961,12 +961,3 @@ demonstration credentials required for technical review.
 
 </p>
 
-------------------------------------------------------------------------
-
-<p align="center">
-
-<strong>{=html}Built with Flutter +
-Supabase</strong>{=html}<br>{=html} Making local service operations
-simpler, faster, and more connected.
-
-</p>
