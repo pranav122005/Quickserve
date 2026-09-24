@@ -1,17 +1,8 @@
-```{=html}
 <p align="center">
-```
-`<img src="docs/assets/quickserve-hero.png" alt="QuickServe Application Showcase" width="90%">`{=html}
-```{=html}
+
+<img src="docs/assets/quickserve-hero.png" alt="QuickServe Application Showcase" width="90%">{=html}
+
 </p>
-```
-```{=html}
-<p align="center">
-```
-`<img src="docs/assets/quickserve-hero.gif" alt="QuickServe Animated Showcase" width="90%">`{=html}
-```{=html}
-</p>
-```
 # ⚡ QuickServe
 
 ### A simple, reliable way to request, assign, track, and complete local services.
@@ -22,21 +13,18 @@ QuickServe is a full-stack service management platform built with
 Flutter and Supabase. Customers create service requests, field service
 agents manage and complete jobs, and administrators maintain operational
 control from a web portal.
-
-```{=html}
 <p align="center">
-```
-`<img src="https://img.shields.io/badge/Flutter-3.47.5-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter">`{=html}
-`<img src="https://img.shields.io/badge/Dart-3.13.4-0175C2?style=for-the-badge&logo=dart&logoColor=white" alt="Dart">`{=html}
-`<img src="https://img.shields.io/badge/Supabase-Backend-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase">`{=html}
-`<img src="https://img.shields.io/badge/PostgreSQL-Database-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL">`{=html}
-`<img src="https://img.shields.io/badge/PostGIS-Spatial-336791?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostGIS">`{=html}
-`<img src="https://img.shields.io/badge/Riverpod-State-6C63FF?style=for-the-badge" alt="Riverpod">`{=html}
-`<img src="https://img.shields.io/badge/Firebase_Hosting-Web-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase Hosting">`{=html}
-`<img src="https://img.shields.io/badge/Platform-Android%20%7C%20Web-111827?style=for-the-badge" alt="Platforms">`{=html}
-```{=html}
+
+<img src="https://img.shields.io/badge/Flutter-3.47.5-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter">{=html}
+<img src="https://img.shields.io/badge/Dart-3.13.4-0175C2?style=for-the-badge&logo=dart&logoColor=white" alt="Dart">{=html}
+<img src="https://img.shields.io/badge/Supabase-Backend-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase">{=html}
+<img src="https://img.shields.io/badge/PostgreSQL-Database-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL">{=html}
+<img src="https://img.shields.io/badge/PostGIS-Spatial-336791?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostGIS">{=html}
+<img src="https://img.shields.io/badge/Riverpod-State-6C63FF?style=for-the-badge" alt="Riverpod">{=html}
+<img src="https://img.shields.io/badge/Firebase_Hosting-Web-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase Hosting">{=html}
+<img src="https://img.shields.io/badge/Platform-Android%20%7C%20Web-111827?style=for-the-badge" alt="Platforms">{=html}
+
 </p>
-```
 
 ------------------------------------------------------------------------
 
@@ -965,25 +953,20 @@ demonstration credentials required for technical review.
 ------------------------------------------------------------------------
 
 ## ✦ Brand & License
-
-```{=html}
 <p align="center">
-```
-`<img src="docs/assets/quickserve-logo.jpg" alt="QuickServe Logo" width="300">`{=html}`<br>`{=html}
-`<strong>`{=html}QuickServe`</strong>`{=html}`<br>`{=html}
-`<em>`{=html}Request it. Dispatch it. Complete it.`</em>`{=html}
-```{=html}
+
+<img src="docs/assets/quickserve-logo.jpg" alt="QuickServe Logo" width="300">{=html}<br>{=html}
+<strong>{=html}QuickServe</strong>{=html}<br>{=html}
+<em>{=html}Request it. Dispatch it. Complete it.</em>{=html}
+
 </p>
-```
 
 ------------------------------------------------------------------------
 
-```{=html}
 <p align="center">
-```
-`<strong>`{=html}Built with Flutter +
-Supabase`</strong>`{=html}`<br>`{=html} Making local service operations
+
+<strong>{=html}Built with Flutter +
+Supabase</strong>{=html}<br>{=html} Making local service operations
 simpler, faster, and more connected.
-```{=html}
+
 </p>
-```
