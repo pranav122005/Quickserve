@@ -1,6 +1,6 @@
 <p align="center">
 
-<img src="docs/assets/quickserve-hero.png" alt="QuickServe Application Showcase" width="90%">{=html}
+<img src="docs/assets/quickserve-hero.png" alt="QuickServe Application Showcase" width="90%">
 
 </p>
 # ⚡ QuickServe
