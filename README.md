@@ -956,8 +956,6 @@ demonstration credentials required for technical review.
 <p align="center">
 
 <img src="docs/assets/quickserve-logo.jpg" alt="QuickServe Logo" width="300">{=html}<br>{=html}
-<strong>{=html}QuickServe</strong>{=html}<br>{=html}
-<em>{=html}Request it. Dispatch it. Complete it.</em>{=html}
 
 </p>
 
