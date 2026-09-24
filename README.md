@@ -955,7 +955,7 @@ demonstration credentials required for technical review.
 ## ✦ Brand & License
 <p align="center">
 
-<img src="docs/assets/quickserve-logo.jpg" alt="QuickServe Logo" width="300">{=html}<br>{=html}
+<img src="docs/assets/quickserve-logo.jpg" alt="QuickServe Logo" width="300">
 
 </p>
 
