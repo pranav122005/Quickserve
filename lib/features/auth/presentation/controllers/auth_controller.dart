@@ -100,6 +100,24 @@ class AuthController extends Notifier<AppAuthState> {
     }
   }
 
+  Future<bool> signInWithGoogle({UserRole requestedRole = UserRole.customer}) async {
+    state = AppAuthState.loading();
+    try {
+      final success = await _authRepository.signInWithOAuthGoogle(
+        requestedRole: requestedRole,
+      );
+      if (!success) {
+        state = AppAuthState.unauthenticated();
+        return false;
+      }
+      return true;
+    } catch (e) {
+      final userMessage = ErrorHandler.getUserMessage(e);
+      state = AppAuthState.error(userMessage);
+      return false;
+    }
+  }
+
   Future<bool> resetPassword({required String email}) async {
     try {
       await _authRepository.resetPassword(email: email);

@@ -21,6 +21,9 @@ abstract class AuthRepository {
     String? phone,
   });
 
+  /// Signs in or registers a user using Google OAuth via Supabase Auth.
+  Future<bool> signInWithOAuthGoogle({UserRole requestedRole = UserRole.customer});
+
   /// Signs out the currently authenticated user.
   Future<void> signOut();
 

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'auth_repository.dart';
 import '../models/user_role.dart';
@@ -41,6 +42,17 @@ class AuthRepositoryImpl implements AuthRepository {
       email: email.trim(),
       password: password,
       data: data,
+    );
+  }
+
+  @override
+  Future<bool> signInWithOAuthGoogle({UserRole requestedRole = UserRole.customer}) async {
+    return await _supabaseService.auth.signInWithOAuth(
+      OAuthProvider.google,
+      redirectTo: kIsWeb ? null : 'io.supabase.quickserve://login-callback',
+      queryParams: {
+        'requested_role': requestedRole == UserRole.agent ? 'agent' : 'customer',
+      },
     );
   }
 
