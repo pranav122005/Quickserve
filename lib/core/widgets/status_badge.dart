@@ -17,22 +17,22 @@ class StatusBadge extends StatelessWidget {
     Color c;
     switch (status) {
       case RequestStatus.pending:
-        c = Colors.orange.shade700;
+        c = const Color(0xFFD97706); // Amber 600
         break;
       case RequestStatus.dispatching:
-        c = Colors.blue.shade700;
+        c = const Color(0xFF2563EB); // Blue 600
         break;
       case RequestStatus.assigned:
-        c = Colors.indigo.shade700;
+        c = const Color(0xFF4F46E5); // Indigo 600
         break;
       case RequestStatus.inProgress:
-        c = Colors.purple.shade700;
+        c = const Color(0xFF9333EA); // Purple 600
         break;
       case RequestStatus.completed:
-        c = Colors.green.shade700;
+        c = const Color(0xFF10B981); // Emerald 500
         break;
       case RequestStatus.cancelled:
-        c = Colors.red.shade700;
+        c = const Color(0xFFEF4444); // Red 500
         break;
     }
     return StatusBadge(label: status.displayName, color: c);
@@ -42,19 +42,19 @@ class StatusBadge extends StatelessWidget {
     Color c;
     switch (status) {
       case AssignmentStatus.offered:
-        c = Colors.amber.shade800;
+        c = const Color(0xFFD97706);
         break;
       case AssignmentStatus.accepted:
-        c = Colors.indigo.shade700;
+        c = const Color(0xFF4F46E5);
         break;
       case AssignmentStatus.rejected:
-        c = Colors.red.shade700;
+        c = const Color(0xFFEF4444);
         break;
       case AssignmentStatus.cancelled:
-        c = Colors.grey.shade700;
+        c = const Color(0xFF64748B);
         break;
       case AssignmentStatus.completed:
-        c = Colors.green.shade700;
+        c = const Color(0xFF10B981);
         break;
     }
     return StatusBadge(label: status.displayName, color: c);
@@ -64,13 +64,13 @@ class StatusBadge extends StatelessWidget {
     Color c;
     switch (status) {
       case PaymentStatus.paid:
-        c = Colors.green.shade700;
+        c = const Color(0xFF10B981);
         break;
       case PaymentStatus.pending:
-        c = Colors.amber.shade800;
+        c = const Color(0xFFD97706);
         break;
       case PaymentStatus.failed:
-        c = Colors.red.shade700;
+        c = const Color(0xFFEF4444);
         break;
     }
     return StatusBadge(label: status.displayName, color: c);
@@ -79,19 +79,35 @@ class StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.25), width: 1),
       ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              letterSpacing: -0.1,
+            ),
+          ),
+        ],
       ),
     );
   }

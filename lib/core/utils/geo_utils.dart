@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:math' as math;
 
 /// Represents a geographic coordinate pair (latitude, longitude).
@@ -73,14 +74,18 @@ class GeoUtils {
   /// Parses a PostGIS representation from Supabase into a [GeoPoint].
   /// 
   /// Supports:
+  /// - GeoPoint instance: directly returned
   /// - WKT String: `POINT(77.5946 12.9716)`
+  /// - PostGIS EWKB / Hex string: `0101000020E6100000...`
   /// - GeoJSON Map: `{"type": "Point", "coordinates": [77.5946, 12.9716]}`
-  /// - EWKB / Hex string fallback if present
+  /// - Map with latitude/longitude or lat/lon fields
+  /// - Comma-separated String: `"12.9716, 77.5946"`
   static GeoPoint? parsePoint(dynamic raw) {
     if (raw == null) return null;
+    if (raw is GeoPoint) return raw;
 
     if (raw is Map) {
-      // GeoJSON format: coordinates are [longitude, latitude]
+      // 1. GeoJSON format: coordinates are [longitude, latitude]
       final coords = raw['coordinates'];
       if (coords is List && coords.length >= 2) {
         final lon = (coords[0] as num).toDouble();
@@ -89,12 +94,25 @@ class GeoUtils {
           return GeoPoint(latitude: lat, longitude: lon);
         }
       }
+
+      // 2. Map with explicit keys
+      final lat = (raw['latitude'] ?? raw['lat']) as num?;
+      final lon = (raw['longitude'] ?? raw['lon'] ?? raw['lng']) as num?;
+      if (lat != null && lon != null) {
+        final dLat = lat.toDouble();
+        final dLon = lon.toDouble();
+        if (isValidCoordinates(dLat, dLon)) {
+          return GeoPoint(latitude: dLat, longitude: dLon);
+        }
+      }
       return null;
     }
 
     if (raw is String) {
       final str = raw.trim();
-      // Match WKT `POINT(lon lat)` or `POINT (lon lat)`
+      if (str.isEmpty) return null;
+
+      // 1. Match WKT `POINT(lon lat)` or `POINT (lon lat)`
       final regExp = RegExp(
         r'POINT\s*\(\s*([+-]?\d+(?:\.\d+)?)\s+([+-]?\d+(?:\.\d+)?)\s*\)',
         caseSensitive: false,
@@ -107,8 +125,59 @@ class GeoUtils {
           return GeoPoint(latitude: lat, longitude: lon);
         }
       }
+
+      // 2. EWKB / PostGIS Hex string format
+      final ewkbPoint = _parseEwkbHex(str);
+      if (ewkbPoint != null) return ewkbPoint;
+
+      // 3. Comma-separated lat,lon format e.g. "12.9716, 77.5946"
+      if (str.contains(',')) {
+        final parts = str.split(',');
+        if (parts.length == 2) {
+          final lat = double.tryParse(parts[0].trim());
+          final lon = double.tryParse(parts[1].trim());
+          if (lat != null && lon != null && isValidCoordinates(lat, lon)) {
+            return GeoPoint(latitude: lat, longitude: lon);
+          }
+        }
+      }
     }
 
+    return null;
+  }
+
+  /// Parses PostGIS EWKB binary hex string into [GeoPoint].
+  static GeoPoint? _parseEwkbHex(String hexStr) {
+    try {
+      final cleanHex = hexStr.replaceAll(RegExp(r'[^0-9a-fA-F]'), '');
+      if (cleanHex.length < 42) return null;
+
+      final bytes = Uint8List(cleanHex.length ~/ 2);
+      for (int i = 0; i < bytes.length; i++) {
+        bytes[i] = int.parse(cleanHex.substring(i * 2, i * 2 + 2), radix: 16);
+      }
+
+      final byteData = ByteData.sublistView(bytes);
+      final isLittleEndian = bytes[0] == 1;
+      final endian = isLittleEndian ? Endian.little : Endian.big;
+
+      final type = byteData.getUint32(1, endian);
+      final bool hasSrid = (type & 0x20000000) != 0;
+
+      int offset = 5;
+      if (hasSrid) {
+        offset += 4; // Skip 4-byte SRID field
+      }
+
+      if (offset + 16 > bytes.length) return null;
+
+      final lon = byteData.getFloat64(offset, endian);
+      final lat = byteData.getFloat64(offset + 8, endian);
+
+      if (isValidCoordinates(lat, lon)) {
+        return GeoPoint(latitude: lat, longitude: lon);
+      }
+    } catch (_) {}
     return null;
   }
 

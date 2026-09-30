@@ -81,6 +81,7 @@ class ServiceRequest {
   final RequestPriority priority;
   final RequestStatus status;
   final GeoPoint? location;
+  final DateTime? estimatedArrival;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final UserProfile? customerProfile;
@@ -98,6 +99,7 @@ class ServiceRequest {
     required this.priority,
     required this.status,
     this.location,
+    this.estimatedArrival,
     this.createdAt,
     this.updatedAt,
     this.customerProfile,
@@ -109,6 +111,18 @@ class ServiceRequest {
       joinedCustomer = UserProfile.fromMap(map['profiles'] as Map<String, dynamic>);
     }
 
+    GeoPoint? parsedLocation = GeoUtils.parsePoint(map[DbColumns.serviceLocation]);
+    if (parsedLocation == null && map['location'] != null) {
+      parsedLocation = GeoUtils.parsePoint(map['location']);
+    }
+    if (parsedLocation == null && map['latitude'] != null && map['longitude'] != null) {
+      final lat = (map['latitude'] as num?)?.toDouble();
+      final lon = (map['longitude'] as num?)?.toDouble();
+      if (lat != null && lon != null && GeoUtils.isValidCoordinates(lat, lon)) {
+        parsedLocation = GeoPoint(latitude: lat, longitude: lon);
+      }
+    }
+
     return ServiceRequest(
       id: map[DbColumns.id] as String,
       customerId: map[DbColumns.customerId] as String,
@@ -118,7 +132,10 @@ class ServiceRequest {
       serviceAddress: (map[DbColumns.serviceAddress] as String?) ?? '',
       priority: RequestPriority.fromString(map[DbColumns.priority] as String?),
       status: RequestStatus.fromString(map[DbColumns.status] as String?),
-      location: GeoUtils.parsePoint(map[DbColumns.serviceLocation]),
+      location: parsedLocation,
+      estimatedArrival: map[DbColumns.estimatedArrival] != null
+          ? DateTime.tryParse(map[DbColumns.estimatedArrival] as String)
+          : null,
       createdAt: map[DbColumns.createdAt] != null
           ? DateTime.tryParse(map[DbColumns.createdAt] as String)
           : null,
@@ -144,6 +161,9 @@ class ServiceRequest {
     if (location != null) {
       data[DbColumns.serviceLocation] = location!.toWkt();
     }
+    if (estimatedArrival != null) {
+      data[DbColumns.estimatedArrival] = estimatedArrival!.toIso8601String();
+    }
     return data;
   }
 
@@ -159,6 +179,7 @@ class ServiceRequest {
     RequestPriority? priority,
     RequestStatus? status,
     GeoPoint? location,
+    DateTime? estimatedArrival,
     DateTime? createdAt,
     DateTime? updatedAt,
     UserProfile? customerProfile,
@@ -173,6 +194,7 @@ class ServiceRequest {
       priority: priority ?? this.priority,
       status: status ?? this.status,
       location: location ?? this.location,
+      estimatedArrival: estimatedArrival ?? this.estimatedArrival,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       customerProfile: customerProfile ?? this.customerProfile,

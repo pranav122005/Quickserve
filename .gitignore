@@ -9,6 +9,10 @@ build/
 .flutter-plugins
 .flutter-plugins-dependencies
 
+# Firebase & APK Build Artifacts
+.firebase/
+*.apk
+
 # IDE & Build
 .idea/
 .vscode/

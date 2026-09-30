@@ -9,26 +9,26 @@ class PriorityBadge extends StatelessWidget {
   Color _getColor() {
     switch (priority) {
       case RequestPriority.low:
-        return Colors.blueGrey;
+        return const Color(0xFF64748B); // Slate 500
       case RequestPriority.normal:
-        return const Color(0xFF2563EB);
+        return const Color(0xFF2563EB); // Blue 600
       case RequestPriority.high:
-        return Colors.orange.shade800;
+        return const Color(0xFFD97706); // Amber 600
       case RequestPriority.urgent:
-        return Colors.red.shade700;
+        return const Color(0xFFEF4444); // Red 500
     }
   }
 
   IconData _getIcon() {
     switch (priority) {
       case RequestPriority.low:
-        return Icons.arrow_downward;
+        return Icons.arrow_downward_rounded;
       case RequestPriority.normal:
-        return Icons.remove;
+        return Icons.remove_rounded;
       case RequestPriority.high:
-        return Icons.arrow_upward;
+        return Icons.arrow_upward_rounded;
       case RequestPriority.urgent:
-        return Icons.warning_amber_rounded;
+        return Icons.bolt_rounded;
     }
   }
 
@@ -36,11 +36,11 @@ class PriorityBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = _getColor();
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withValues(alpha: 0.25)),
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -53,6 +53,7 @@ class PriorityBadge extends StatelessWidget {
               color: color,
               fontSize: 11,
               fontWeight: FontWeight.w600,
+              letterSpacing: -0.1,
             ),
           ),
         ],

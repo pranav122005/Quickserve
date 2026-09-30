@@ -19,6 +19,11 @@ class AgentLocationState {
     this.errorMessage,
   });
 
+  GeoPoint? get currentLocation =>
+      latitude != null && GeoUtils.isValidCoordinates(latitude!, longitude)
+          ? GeoPoint(latitude: latitude!, longitude: longitude)
+          : null;
+
   AgentLocationState copyWith({
     bool? isPublishing,
     double? latitude,

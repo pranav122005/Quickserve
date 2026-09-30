@@ -6,10 +6,10 @@ import '../../../../core/widgets/empty_state_view.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../../core/widgets/priority_badge.dart';
 import '../../../../core/widgets/status_badge.dart';
+import '../../../../core/widgets/quickserve_components.dart';
 import '../../../../models/service_request.dart';
 import '../../../../models/user_role.dart';
 import '../../../../services/audit_service.dart';
-import '../../../auth/presentation/controllers/auth_providers.dart';
 import '../controllers/admin_controller.dart';
 import 'admin_request_details_dialog.dart';
 import 'manual_assign_dialog.dart';
@@ -71,7 +71,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                 : 'Dispatch result: ${result.message}',
           ),
           backgroundColor:
-              result.isSuccess ? Colors.green : Colors.orange.shade800,
+              result.isSuccess ? const Color(0xFF10B981) : const Color(0xFFD97706),
         ),
       );
     }
@@ -79,9 +79,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
 
   @override
   Widget build(BuildContext context) {
-    final profile = ref.watch(currentUserProfileProvider);
     final adminState = ref.watch(adminDashboardProvider);
-    final theme = Theme.of(context);
 
     return DashboardShell(
       title: 'Admin Operations',
@@ -102,7 +100,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Welcome & Operations Header
+                    // Header Row
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -111,133 +109,94 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Welcome, ${profile?.fullName.isNotEmpty == true ? profile!.fullName : "Administrator"}',
-                                style: theme.textTheme.headlineSmall?.copyWith(
+                                'Overview & Operations',
+                                style: const TextStyle(
+                                  fontSize: 22,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.deepPurple.shade900,
+                                  color: Color(0xFF0F172A),
+                                  letterSpacing: -0.5,
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Monitor requests, dispatch agents, and track operations.',
+                              const SizedBox(height: 2),
+                              const Text(
+                                'Real-time platform metrics, request management, and manual dispatch control.',
                                 style: TextStyle(
-                                  color: Colors.grey.shade600,
-                                  fontSize: 14,
+                                  color: Color(0xFF64748B),
+                                  fontSize: 13,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        IconButton.filledTonal(
-                          icon: const Icon(Icons.refresh),
-                          tooltip: 'Refresh Data',
-                          onPressed: () => ref
-                              .read(adminDashboardProvider.notifier)
-                              .loadAdminData(),
+                        ElevatedButton.icon(
+                          onPressed: () => ref.read(adminDashboardProvider.notifier).loadAdminData(),
+                          icon: const Icon(Icons.refresh_rounded, size: 18),
+                          label: const Text('Refresh Data'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF2563EB),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 24),
 
-                    // KPI Metrics Row
+                    // Real-Time Backend Stat KPI Cards
                     _buildKpiMetrics(adminState),
                     const SizedBox(height: 28),
 
-                    // Tab Navigation
+                    // Tab Navigation Bar
                     Container(
+                      padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(10),
+                        color: const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: TabBar(
                         controller: _tabController,
                         isScrollable: true,
                         tabAlignment: TabAlignment.start,
-                        labelColor: Colors.deepPurple.shade700,
-                        unselectedLabelColor: Colors.grey.shade600,
+                        labelColor: const Color(0xFF2563EB),
+                        unselectedLabelColor: const Color(0xFF64748B),
+                        labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
                         indicatorSize: TabBarIndicatorSize.tab,
                         indicator: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(10),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.05),
+                              color: const Color(0xFF0F172A).withValues(alpha: 0.05),
                               blurRadius: 4,
                               offset: const Offset(0, 2),
                             ),
                           ],
                         ),
                         tabs: [
-                          Tab(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.assignment_outlined, size: 18),
-                                const SizedBox(width: 8),
-                                Text('Requests (${adminState.requests.length})'),
-                              ],
-                            ),
-                          ),
-                          Tab(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.people_outline, size: 18),
-                                const SizedBox(width: 8),
-                                Text('Customers (${adminState.totalCustomers})'),
-                              ],
-                            ),
-                          ),
-                          Tab(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.support_agent_outlined, size: 18),
-                                const SizedBox(width: 8),
-                                Text('Agents (${adminState.totalAgents})'),
-                              ],
-                            ),
-                          ),
-                          Tab(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.payments_outlined, size: 18),
-                                const SizedBox(width: 8),
-                                Text('Payments (${adminState.totalPaymentsCount})'),
-                              ],
-                            ),
-                          ),
-                          Tab(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.shield_outlined, size: 18),
-                                const SizedBox(width: 8),
-                                Text('Audit Logs (${ref.watch(auditServiceProvider).events.length})'),
-                              ],
-                            ),
-                          ),
+                          Tab(text: 'Requests (${adminState.requests.length})'),
+                          Tab(text: 'Customers (${adminState.totalCustomers})'),
+                          Tab(text: 'Agents (${adminState.totalAgents})'),
+                          Tab(text: 'Payments (${adminState.totalPaymentsCount})'),
+                          Tab(text: 'Audit Logs (${ref.watch(auditServiceProvider).events.length})'),
                         ],
                       ),
                     ),
                     const SizedBox(height: 16),
 
                     // Tab Views
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(minHeight: 480),
-                      child: SizedBox(
-                        height: 520,
-                        child: TabBarView(
-                          controller: _tabController,
-                          children: [
-                            _buildRequestsTab(adminState),
-                            _buildCustomersTab(adminState),
-                            _buildAgentsTab(adminState),
-                            _buildPaymentsTab(adminState),
-                            _buildAuditLogsTab(),
-                          ],
-                        ),
+                    SizedBox(
+                      height: 540,
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          _buildRequestsTab(adminState),
+                          _buildCustomersTab(adminState),
+                          _buildAgentsTab(adminState),
+                          _buildPaymentsTab(adminState),
+                          _buildAuditLogsTab(),
+                        ],
                       ),
                     ),
                   ],
@@ -248,71 +207,48 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
   Widget _buildKpiMetrics(AdminDashboardState state) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final crossCount = constraints.maxWidth > 800 ? 6 : 3;
+        final isWide = constraints.maxWidth > 800;
+        final count = isWide ? 4 : 2;
+
         return GridView.count(
-          crossAxisCount: crossCount,
+          crossAxisCount: count,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          childAspectRatio: 1.5,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: isWide ? 2.4 : 1.8,
           children: [
-            _kpiCard('Pending', state.pendingRequests.toString(),
-                Icons.hourglass_top, Colors.amber.shade700, Colors.amber.shade50),
-            _kpiCard('Active', state.activeRequests.toString(),
-                Icons.run_circle_outlined, Colors.blue.shade700, Colors.blue.shade50),
-            _kpiCard('Completed', state.completedRequests.toString(),
-                Icons.check_circle_outline, Colors.green.shade700, Colors.green.shade50),
-            _kpiCard('Customers', state.totalCustomers.toString(),
-                Icons.people, Colors.purple.shade700, Colors.purple.shade50),
-            _kpiCard('Agents', state.totalAgents.toString(),
-                Icons.support_agent, Colors.indigo.shade700, Colors.indigo.shade50),
-            _kpiCard('Revenue',
-                Formatters.formatCurrency(state.totalRevenue, currency: 'INR'),
-                Icons.currency_rupee, Colors.teal.shade700, Colors.teal.shade50),
+            QuickServeStatCard(
+              title: 'Total Requests',
+              value: state.requests.length.toString(),
+              icon: Icons.assignment_rounded,
+              iconColor: const Color(0xFF2563EB),
+              iconBgColor: const Color(0xFFEFF6FF),
+            ),
+            QuickServeStatCard(
+              title: 'Active Requests',
+              value: state.activeRequests.toString(),
+              icon: Icons.timelapse_rounded,
+              iconColor: const Color(0xFFD97706),
+              iconBgColor: const Color(0xFFFFFBEB),
+            ),
+            QuickServeStatCard(
+              title: 'Available Agents',
+              value: state.agents.where((a) => a.availability.isAvailable).length.toString(),
+              icon: Icons.engineering_rounded,
+              iconColor: const Color(0xFF10B981),
+              iconBgColor: const Color(0xFFECFDF5),
+            ),
+            QuickServeStatCard(
+              title: 'Completed Jobs',
+              value: state.completedRequests.toString(),
+              icon: Icons.check_circle_rounded,
+              iconColor: const Color(0xFF4F46E5),
+              iconBgColor: const Color(0xFFEEF2FF),
+            ),
           ],
         );
       },
-    );
-  }
-
-  Widget _kpiCard(String label, String value, IconData icon, Color color, Color bg) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 18, color: color),
-              const Spacer(),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: color.withValues(alpha: 0.9),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -323,13 +259,14 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
     }
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // Status Filter Chips
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              FilterChip(
+              ChoiceChip(
                 label: const Text('All Requests'),
                 selected: _statusFilter == null,
                 onSelected: (selected) {
@@ -340,7 +277,7 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
               ...RequestStatus.values.map(
                 (status) => Padding(
                   padding: const EdgeInsets.only(right: 8.0),
-                  child: FilterChip(
+                  child: ChoiceChip(
                     label: Text(status.displayName),
                     selected: _statusFilter == status,
                     onSelected: (selected) {
@@ -355,139 +292,115 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
           ),
         ),
         const SizedBox(height: 12),
-        // Requests List
+
+        // Requests List Card Table
         Expanded(
           child: filtered.isEmpty
-              ? EmptyStateView(
-                  icon: Icons.inbox_outlined,
-                  title: 'No requests found',
-                  message: _statusFilter != null
-                      ? 'No requests with status "${_statusFilter!.displayName}".'
-                      : 'No customer service requests registered yet.',
+              ? const QuickServeCard(
+                  child: EmptyStateView(
+                    icon: Icons.inbox_rounded,
+                    title: 'No requests found',
+                    message: 'No service requests currently match the selected filter.',
+                  ),
                 )
-              : ListView.separated(
-                  itemCount: filtered.length,
-                  separatorBuilder: (_, _) => const Divider(height: 1),
-                  itemBuilder: (context, index) {
-                    final req = filtered[index];
-                    return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  '${req.formattedId} • ${req.title}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ),
-                                ),
+              : QuickServeCard(
+                  padding: EdgeInsets.zero,
+                  child: ListView.separated(
+                    itemCount: filtered.length,
+                    separatorBuilder: (_, _) => const Divider(height: 1),
+                    itemBuilder: (context, index) {
+                      final req = filtered[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: ServiceCategoryHelper.getBgColor(req.category),
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              const SizedBox(width: 8),
-                              Wrap(
-                                spacing: 6,
-                                runSpacing: 6,
-                                children: [
-                                  PriorityBadge(priority: req.priority),
-                                  StatusBadge.forRequest(req.status),
-                                ],
+                              child: Icon(
+                                ServiceCategoryHelper.getIcon(req.category),
+                                color: ServiceCategoryHelper.getColor(req.category),
+                                size: 22,
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 12,
-                            runSpacing: 4,
-                            children: [
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              flex: 3,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Icon(Icons.category_outlined, size: 14, color: Colors.grey.shade600),
-                                  const SizedBox(width: 4),
-                                  Text(req.category, style: TextStyle(fontSize: 12, color: Colors.grey.shade700)),
-                                ],
-                              ),
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.calendar_today_outlined, size: 14, color: Colors.grey.shade600),
-                                  const SizedBox(width: 4),
                                   Text(
-                                    Formatters.formatDateTime(req.createdAt),
-                                    style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                                    '${req.formattedId} • ${req.title}',
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF0F172A)),
                                   ),
-                                ],
-                              ),
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.place_outlined, size: 14, color: Colors.grey.shade600),
-                                  const SizedBox(width: 4),
+                                  const SizedBox(height: 2),
                                   Text(
-                                    req.serviceAddress,
+                                    'Customer: ${req.customerProfile?.fullName ?? req.customerId.substring(0, 8)} • Address: ${req.serviceAddress}',
+                                    style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Wrap(
-                                spacing: 8,
-                                runSpacing: 8,
-                                children: [
-                                  if (req.status.isPending || req.status.isDispatching)
-                                    ElevatedButton.icon(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(0xFF2563EB),
-                                        foregroundColor: Colors.white,
-                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                      ),
-                                      icon: const Icon(Icons.radar, size: 14),
-                                      label: Text(
-                                        req.status.isDispatching ? 'Retry Dispatch' : 'Dispatch',
-                                        style: const TextStyle(fontSize: 12),
-                                      ),
-                                      onPressed: () => _autoDispatch(req),
+                            ),
+                            const SizedBox(width: 12),
+                            PriorityBadge(priority: req.priority),
+                            const SizedBox(width: 8),
+                            StatusBadge.forRequest(req.status),
+                            const SizedBox(width: 16),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (req.status.isPending || req.status.isDispatching)
+                                  ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF2563EB),
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                     ),
-                                  if (req.status.isPending)
-                                    ElevatedButton.icon(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.deepPurple,
-                                        foregroundColor: Colors.white,
-                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                      ),
-                                      icon: const Icon(Icons.person_add, size: 14),
-                                      label: const Text('Assign', style: TextStyle(fontSize: 12)),
-                                      onPressed: () => _assignRequest(req),
+                                    icon: const Icon(Icons.radar_rounded, size: 14),
+                                    label: Text(
+                                      req.status.isDispatching ? 'Retry' : 'Dispatch',
+                                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                                     ),
-                                  OutlinedButton(
-                                    style: OutlinedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                    onPressed: () => _autoDispatch(req),
+                                  ),
+                                if (req.status.isPending) ...[
+                                  const SizedBox(width: 6),
+                                  ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF4F46E5),
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                     ),
-                                    child: const Text('Inspect', style: TextStyle(fontSize: 12)),
-                                    onPressed: () => _inspectRequest(req),
+                                    icon: const Icon(Icons.person_add_rounded, size: 14),
+                                    label: const Text('Assign', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                                    onPressed: () => _assignRequest(req),
                                   ),
                                 ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                                const SizedBox(width: 6),
+                                OutlinedButton(
+                                  style: OutlinedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                    side: const BorderSide(color: Color(0xFFE2E8F0)),
+                                  ),
+                                  child: const Text('Inspect', style: TextStyle(fontSize: 12, color: Color(0xFF0F172A))),
+                                  onPressed: () => _inspectRequest(req),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
         ),
       ],
@@ -496,183 +409,175 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
 
   Widget _buildCustomersTab(AdminDashboardState state) {
     if (state.customers.isEmpty) {
-      return const EmptyStateView(
-        icon: Icons.people_outline,
-        title: 'No Customers Found',
-        message: 'No registered customer accounts yet.',
+      return const QuickServeCard(
+        child: EmptyStateView(
+          icon: Icons.people_outline_rounded,
+          title: 'No Customers Found',
+          message: 'No registered customer accounts yet.',
+        ),
       );
     }
 
-    return ListView.separated(
-      itemCount: state.customers.length,
-      separatorBuilder: (_, _) => const Divider(height: 1),
-      itemBuilder: (context, index) {
-        final c = state.customers[index];
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundColor: Colors.purple.shade100,
-            foregroundColor: Colors.purple.shade900,
-            child: Text(
-              c.fullName.isNotEmpty ? c.fullName[0].toUpperCase() : 'C',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+    return QuickServeCard(
+      padding: EdgeInsets.zero,
+      child: ListView.separated(
+        itemCount: state.customers.length,
+        separatorBuilder: (_, _) => const Divider(height: 1),
+        itemBuilder: (context, index) {
+          final c = state.customers[index];
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundColor: const Color(0xFFEFF6FF),
+              foregroundColor: const Color(0xFF2563EB),
+              child: Text(
+                c.fullName.isNotEmpty ? c.fullName[0].toUpperCase() : 'C',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
-          ),
-          title: Text(
-            c.fullName.isNotEmpty ? c.fullName : 'Customer (${c.id})',
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-          subtitle: Text(
-            'Phone: ${c.phone ?? "N/A"} • ID: ${c.id}',
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-          ),
-          trailing: Text(
-            Formatters.formatDateTime(c.createdAt),
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-          ),
-        );
-      },
+            title: Text(
+              c.fullName.isNotEmpty ? c.fullName : 'Customer (${c.id})',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF0F172A)),
+            ),
+            subtitle: Text(
+              'Phone: ${c.phone ?? "N/A"} • ID: ${c.id}',
+              style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+            ),
+            trailing: Text(
+              Formatters.formatDateTime(c.createdAt),
+              style: const TextStyle(fontSize: 12, color: Color(0xFF94A3B8)),
+            ),
+          );
+        },
+      ),
     );
   }
 
   Widget _buildAgentsTab(AdminDashboardState state) {
     if (state.agents.isEmpty) {
-      return const EmptyStateView(
-        icon: Icons.support_agent_outlined,
-        title: 'No Agents Found',
-        message: 'No service agent accounts configured yet.',
+      return const QuickServeCard(
+        child: EmptyStateView(
+          icon: Icons.engineering_rounded,
+          title: 'No Agents Found',
+          message: 'No service agent accounts configured yet.',
+        ),
       );
     }
 
-    return ListView.separated(
-      itemCount: state.agents.length,
-      separatorBuilder: (_, _) => const Divider(height: 1),
-      itemBuilder: (context, index) {
-        final a = state.agents[index];
-        final name = a.userProfile?.fullName.isNotEmpty == true
-            ? a.userProfile!.fullName
-            : 'Agent ${a.userId.substring(0, 8)}';
+    return QuickServeCard(
+      padding: EdgeInsets.zero,
+      child: ListView.separated(
+        itemCount: state.agents.length,
+        separatorBuilder: (_, _) => const Divider(height: 1),
+        itemBuilder: (context, index) {
+          final a = state.agents[index];
+          final name = a.userProfile?.fullName.isNotEmpty == true
+              ? a.userProfile!.fullName
+              : 'Agent ${a.userId.substring(0, 8)}';
 
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundColor: Colors.indigo.shade100,
-            foregroundColor: Colors.indigo.shade900,
-            child: Text(
-              name[0].toUpperCase(),
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          title: Row(
-            children: [
-              Text(name, style: const TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(width: 8),
-              if (a.isVerified)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.green.shade50,
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: Colors.green.shade300),
-                  ),
-                  child: Text(
-                    'Verified',
-                    style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.green.shade800),
-                  ),
-                ),
-            ],
-          ),
-          subtitle: Text(
-            'Radius: ${a.serviceRadiusKm.toStringAsFixed(1)} km • User ID: ${a.userId}',
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-          ),
-          trailing: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: a.availability.isAvailable
-                  ? Colors.green.shade50
-                  : Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: a.availability.isAvailable
-                    ? Colors.green.shade300
-                    : Colors.grey.shade300,
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundColor: const Color(0xFFECFDF5),
+              foregroundColor: const Color(0xFF10B981),
+              child: Text(
+                name[0].toUpperCase(),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
-            child: Text(
-              a.availability.displayName,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: a.availability.isAvailable
-                    ? Colors.green.shade800
-                    : Colors.grey.shade700,
-              ),
+            title: Row(
+              children: [
+                Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF0F172A))),
+                const SizedBox(width: 8),
+                if (a.isVerified)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFECFDF5),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: const Color(0xFFA7F3D0)),
+                    ),
+                    child: const Text(
+                      'Verified Agent',
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF059669)),
+                    ),
+                  ),
+              ],
             ),
-          ),
-        );
-      },
+            subtitle: Text(
+              'Radius: ${a.serviceRadiusKm.toStringAsFixed(1)} km • User ID: ${a.userId}',
+              style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+            ),
+            trailing: StatusBadge(
+              label: a.availability.displayName,
+              color: a.availability.isAvailable ? const Color(0xFF10B981) : const Color(0xFF64748B),
+            ),
+          );
+        },
+      ),
     );
   }
 
   Widget _buildPaymentsTab(AdminDashboardState state) {
     if (state.payments.isEmpty) {
-      return const EmptyStateView(
-        icon: Icons.payments_outlined,
-        title: 'No Payments Recorded',
-        message: 'No completed job payments have been logged yet.',
+      return const QuickServeCard(
+        child: EmptyStateView(
+          icon: Icons.payments_outlined,
+          title: 'No Payments Recorded',
+          message: 'No completed job payments have been logged yet.',
+        ),
       );
     }
 
-    return ListView.separated(
-      itemCount: state.payments.length,
-      separatorBuilder: (_, _) => const Divider(height: 1),
-      itemBuilder: (context, index) {
-        final p = state.payments[index];
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundColor: Colors.teal.shade50,
-            foregroundColor: Colors.teal.shade700,
-            child: const Icon(Icons.currency_rupee, size: 20),
-          ),
-          title: Row(
-            children: [
-              Text(
-                Formatters.formatCurrency(p.amount, currency: p.currency),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  p.method.displayName,
-                  style: TextStyle(fontSize: 11, color: Colors.grey.shade700),
-                ),
-              ),
-              const Spacer(),
-              StatusBadge.forPayment(p.status),
-            ],
-          ),
-          subtitle: Padding(
-            padding: const EdgeInsets.only(top: 4.0),
-            child: Text(
-              'Request ID: ${p.requestId} • Customer: ${p.customerId.substring(0, 8)}... • Agent: ${p.agentId.substring(0, 8)}...',
-              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+    return QuickServeCard(
+      padding: EdgeInsets.zero,
+      child: ListView.separated(
+        itemCount: state.payments.length,
+        separatorBuilder: (_, _) => const Divider(height: 1),
+        itemBuilder: (context, index) {
+          final p = state.payments[index];
+          return ListTile(
+            leading: const CircleAvatar(
+              backgroundColor: Color(0xFFECFDF5),
+              foregroundColor: Color(0xFF10B981),
+              child: Icon(Icons.currency_rupee_rounded, size: 20),
             ),
-          ),
-          trailing: p.paidAt != null
-              ? Text(
-                  Formatters.formatDateTime(p.paidAt),
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-                )
-              : null,
-        );
-      },
+            title: Row(
+              children: [
+                Text(
+                  Formatters.formatCurrency(p.amount, currency: p.currency),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF0F172A)),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    p.method.displayName,
+                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF475569)),
+                  ),
+                ),
+                const Spacer(),
+                StatusBadge.forPayment(p.status),
+              ],
+            ),
+            subtitle: Padding(
+              padding: const EdgeInsets.only(top: 4.0),
+              child: Text(
+                'Request ID: ${p.requestId} • Customer: ${p.customerId.substring(0, 8)}... • Agent: ${p.agentId.substring(0, 8)}...',
+                style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+              ),
+            ),
+            trailing: p.paidAt != null
+                ? Text(
+                    Formatters.formatDateTime(p.paidAt),
+                    style: const TextStyle(fontSize: 12, color: Color(0xFF94A3B8)),
+                  )
+                : null,
+          );
+        },
+      ),
     );
   }
 
@@ -681,92 +586,90 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard>
     final events = auditService.events;
 
     if (events.isEmpty) {
-      return const EmptyStateView(
-        icon: Icons.shield_outlined,
-        title: 'No Audit Events Logged',
-        message: 'Platform audit events (logins, requests, assignments, auth events) will appear here in real-time.',
+      return const QuickServeCard(
+        child: EmptyStateView(
+          icon: Icons.shield_outlined,
+          title: 'No Audit Events Logged',
+          message: 'Platform audit events (logins, requests, assignments, auth events) will appear here in real-time.',
+        ),
       );
     }
 
-    return ListView.separated(
-      itemCount: events.length,
-      separatorBuilder: (_, _) => const Divider(height: 1),
-      itemBuilder: (context, index) {
-        final ev = events[index];
-        Color badgeColor;
-        switch (ev.eventType) {
-          case AuditEventType.loginSuccess:
-            badgeColor = Colors.green;
-            break;
-          case AuditEventType.requestCreated:
-            badgeColor = Colors.blue;
-            break;
-          case AuditEventType.requestAssigned:
-            badgeColor = Colors.teal;
-            break;
-          case AuditEventType.requestUpdated:
-            badgeColor = Colors.purple;
-            break;
-          case AuditEventType.authorizationFailed:
-            badgeColor = Colors.red;
-            break;
-          case AuditEventType.databaseError:
-            badgeColor = Colors.deepOrange;
-            break;
-          default:
-            badgeColor = Colors.grey;
-        }
+    return QuickServeCard(
+      padding: EdgeInsets.zero,
+      child: ListView.separated(
+        itemCount: events.length,
+        separatorBuilder: (_, _) => const Divider(height: 1),
+        itemBuilder: (context, index) {
+          final ev = events[index];
+          Color badgeColor;
+          switch (ev.eventType) {
+            case AuditEventType.loginSuccess:
+              badgeColor = const Color(0xFF10B981);
+              break;
+            case AuditEventType.requestCreated:
+              badgeColor = const Color(0xFF2563EB);
+              break;
+            case AuditEventType.requestAssigned:
+              badgeColor = const Color(0xFF4F46E5);
+              break;
+            case AuditEventType.authorizationFailed:
+              badgeColor = const Color(0xFFEF4444);
+              break;
+            default:
+              badgeColor = const Color(0xFF64748B);
+          }
 
-        return ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          leading: CircleAvatar(
-            backgroundColor: badgeColor.withValues(alpha: 0.15),
-            child: Icon(Icons.security, color: badgeColor, size: 20),
-          ),
-          title: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: badgeColor.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: badgeColor.withValues(alpha: 0.3)),
-                ),
-                child: Text(
-                  ev.eventType,
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: badgeColor,
+          return ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            leading: CircleAvatar(
+              backgroundColor: badgeColor.withValues(alpha: 0.1),
+              child: Icon(Icons.security_rounded, color: badgeColor, size: 20),
+            ),
+            title: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: badgeColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    ev.eventType,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: badgeColor,
+                    ),
                   ),
                 ),
-              ),
-              const Spacer(),
-              Text(
-                Formatters.formatDateTime(ev.timestamp),
-                style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-              ),
-            ],
-          ),
-          subtitle: Padding(
-            padding: const EdgeInsets.only(top: 6.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+                const Spacer(),
                 Text(
-                  ev.details,
-                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'Actor: ${ev.actorId}',
-                  style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                  Formatters.formatDateTime(ev.timestamp),
+                  style: const TextStyle(fontSize: 12, color: Color(0xFF94A3B8)),
                 ),
               ],
             ),
-          ),
-        );
-      },
+            subtitle: Padding(
+              padding: const EdgeInsets.only(top: 6.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    ev.details,
+                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF0F172A)),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Actor ID: ${ev.actorId}',
+                    style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

@@ -133,57 +133,74 @@ class _CreateRequestDialogState extends ConsumerState<CreateRequestDialog> {
       _formError = null;
     });
 
-    String? fullDescription = _descriptionController.text.trim().isNotEmpty
-        ? _descriptionController.text.trim()
-        : null;
-    if (_preferredDateTime != null) {
-      final scheduleStr = 'Preferred Schedule: ${Formatters.formatDateTime(_preferredDateTime)}';
-      fullDescription = fullDescription != null ? '[$scheduleStr]\n$fullDescription' : '[$scheduleStr]';
-    }
+    try {
+      String? fullDescription = _descriptionController.text.trim().isNotEmpty
+          ? _descriptionController.text.trim()
+          : null;
+      if (_preferredDateTime != null) {
+        final scheduleStr = 'Preferred Schedule: ${Formatters.formatDateTime(_preferredDateTime)}';
+        fullDescription = fullDescription != null ? '[$scheduleStr]\n$fullDescription' : '[$scheduleStr]';
+      }
 
-    final createdRequest = await ref.read(customerRequestsProvider.notifier).createRequest(
-          category: _selectedCategory,
-          title: _titleController.text.trim(),
-          description: fullDescription,
-          serviceAddress: _addressController.text.trim(),
-          priority: _selectedPriority,
-          latitude: _selectedLat,
-          longitude: _selectedLon,
-        );
+      final createdRequest = await ref.read(customerRequestsProvider.notifier).createRequest(
+            category: _selectedCategory,
+            title: _titleController.text.trim(),
+            description: fullDescription,
+            serviceAddress: _addressController.text.trim(),
+            priority: _selectedPriority,
+            latitude: _selectedLat,
+            longitude: _selectedLon,
+          );
 
-    if (mounted) {
-      if (createdRequest != null) {
-        ref.read(auditServiceProvider).logRequestCreated(
-          createdRequest.id,
-          createdRequest.customerId,
-          category: createdRequest.category,
-          title: createdRequest.title,
-        );
+      if (mounted) {
+        if (createdRequest != null) {
+          try {
+            ref.read(auditServiceProvider).logRequestCreated(
+              createdRequest.id,
+              createdRequest.customerId,
+              category: createdRequest.category,
+              title: createdRequest.title,
+            );
+          } catch (_) {}
 
-        ref.read(dispatchServiceProvider).dispatchRequest(createdRequest.id);
+          try {
+            await ref.read(dispatchServiceProvider).dispatchRequest(createdRequest.id);
+          } catch (_) {}
 
-        Navigator.of(context).pop();
+          if (!mounted) return;
 
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => CustomerTrackingScreen(
-              requestId: createdRequest.id,
-              initialRequest: createdRequest,
+          Navigator.of(context).pop();
+
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => CustomerTrackingScreen(
+                requestId: createdRequest.id,
+                initialRequest: createdRequest,
+              ),
             ),
-          ),
-        );
+          );
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Service request submitted and dispatch initiated!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Service request submitted and dispatch initiated!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else {
+          final errMessage = ref.read(customerRequestsProvider).errorMessage;
+          setState(() {
+            _isSubmitting = false;
+            _formError = (errMessage != null && errMessage.isNotEmpty)
+                ? errMessage
+                : 'Unable to submit request. Please check your service details and try again.';
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
         setState(() {
           _isSubmitting = false;
-          _formError = ref.read(customerRequestsProvider).errorMessage ??
-              'Failed to submit service request. Please try again.';
+          _formError = 'Submission failed: ${e.toString()}';
         });
       }
     }
@@ -292,6 +309,7 @@ class _CreateRequestDialogState extends ConsumerState<CreateRequestDialog> {
                         // Title
                         TextFormField(
                           controller: _titleController,
+                          style: const TextStyle(color: Color(0xFF0F172A), fontSize: 14, fontWeight: FontWeight.w500),
                           decoration: const InputDecoration(
                             labelText: 'Request Title',
                             hintText: 'e.g., Kitchen pipe leakage repair',
@@ -313,6 +331,7 @@ class _CreateRequestDialogState extends ConsumerState<CreateRequestDialog> {
                         TextFormField(
                           controller: _descriptionController,
                           maxLines: 2,
+                          style: const TextStyle(color: Color(0xFF0F172A), fontSize: 14, fontWeight: FontWeight.w500),
                           decoration: const InputDecoration(
                             labelText: 'Description (Optional)',
                             hintText: 'Provide details about the issue or requirements...',
@@ -406,6 +425,7 @@ class _CreateRequestDialogState extends ConsumerState<CreateRequestDialog> {
                         // Service Address
                         TextFormField(
                           controller: _addressController,
+                          style: const TextStyle(color: Color(0xFF0F172A), fontSize: 14, fontWeight: FontWeight.w500),
                           decoration: InputDecoration(
                             labelText: 'Service Address',
                             hintText: 'Enter street address, landmark, or city',

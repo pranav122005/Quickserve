@@ -377,6 +377,27 @@ class _CustomerTrackingScreenState extends ConsumerState<CustomerTrackingScreen>
                                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                                   userAgentPackageName: 'com.quickserve.app',
                                 ),
+                                if (_request.location != null &&
+                                    _agentLocation?.location != null &&
+                                    _assignment?.status.isAccepted == true)
+                                  PolylineLayer(
+                                    polylines: [
+                                      Polyline(
+                                        points: [
+                                          LatLng(
+                                            _agentLocation!.location.latitude,
+                                            _agentLocation!.location.longitude,
+                                          ),
+                                          LatLng(
+                                            _request.location!.latitude,
+                                            _request.location!.longitude,
+                                          ),
+                                        ],
+                                        strokeWidth: 4.5,
+                                        color: const Color(0xFF2563EB),
+                                      ),
+                                    ],
+                                  ),
                                 MarkerLayer(
                                   markers: _buildMapMarkers(),
                                 ),
@@ -896,6 +917,51 @@ class _CustomerTrackingScreenState extends ConsumerState<CustomerTrackingScreen>
               ],
             ),
             const SizedBox(height: 10),
+
+            // Estimated Arrival Section
+            if (_request.status.isActive) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF0FDF4),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xFFBBF7D0)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.access_time_filled_rounded, color: Color(0xFF10B981), size: 20),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Estimated Arrival',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Color(0xFF065F46)),
+                          ),
+                          Text(
+                            _request.estimatedArrival != null
+                                ? Formatters.formatDateTime(_request.estimatedArrival)
+                                : 'Not provided yet',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: _request.estimatedArrival != null ? FontWeight.bold : FontWeight.w500,
+                              color: _request.estimatedArrival != null ? const Color(0xFF047857) : Colors.grey.shade700,
+                            ),
+                          ),
+                          if (_request.estimatedArrival != null)
+                            const Text(
+                              'Updated by your service agent',
+                              style: TextStyle(fontSize: 10, fontStyle: FontStyle.italic, color: Color(0xFF059669)),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+            ],
 
             // Agent & Distance Section (if assigned or in progress)
             if (_assignment?.status.isAccepted == true) ...[

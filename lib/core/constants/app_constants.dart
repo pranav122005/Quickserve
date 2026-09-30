@@ -46,6 +46,7 @@ class DbColumns {
   static const String serviceAddress = 'service_address';
   static const String priority = 'priority';
   static const String serviceLocation = 'service_location';
+  static const String estimatedArrival = 'estimated_arrival';
 
   // Service Assignments
   static const String requestId = 'request_id';

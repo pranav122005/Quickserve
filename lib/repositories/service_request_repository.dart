@@ -34,4 +34,10 @@ abstract class ServiceRequestRepository {
     String? changedBy,
     String? note,
   });
+
+  /// Updates the estimated arrival time (ETA) for an active service request.
+  Future<void> updateEstimatedArrival({
+    required String requestId,
+    required DateTime estimatedArrival,
+  });
 }

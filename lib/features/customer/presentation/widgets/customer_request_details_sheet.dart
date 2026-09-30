@@ -241,6 +241,54 @@ class _CustomerRequestDetailsSheetState
               ],
               const SizedBox(height: 16),
 
+              // Estimated Arrival Card
+              if (req.status.isActive) ...[
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF0FDF4),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: const Color(0xFFBBF7D0)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.access_time_filled_rounded, color: Color(0xFF10B981), size: 22),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Estimated Arrival',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF065F46)),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              req.estimatedArrival != null
+                                  ? Formatters.formatDateTime(req.estimatedArrival)
+                                  : 'Not provided yet',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: req.estimatedArrival != null ? FontWeight.bold : FontWeight.w500,
+                                color: req.estimatedArrival != null ? const Color(0xFF047857) : Colors.grey.shade700,
+                              ),
+                            ),
+                            if (req.estimatedArrival != null) ...[
+                              const SizedBox(height: 2),
+                              const Text(
+                                'Updated by your service agent',
+                                style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Color(0xFF059669)),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+
               // Description (if present)
               if (req.description != null && req.description!.trim().isNotEmpty) ...[
                 const Text(

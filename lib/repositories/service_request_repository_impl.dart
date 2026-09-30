@@ -21,18 +21,21 @@ class ServiceRequestRepositoryImpl implements ServiceRequestRepository {
     double? latitude,
     double? longitude,
   }) async {
+    final String cleanTitle = title.trim();
+    final String cleanAddress = serviceAddress.trim().isNotEmpty ? serviceAddress.trim() : 'Address not specified';
+    final String cleanDescription = (description != null && description.trim().isNotEmpty)
+        ? description.trim()
+        : cleanTitle;
+
     final data = <String, dynamic>{
       DbColumns.customerId: customerId,
       DbColumns.category: category,
-      DbColumns.title: title.trim(),
-      DbColumns.serviceAddress: serviceAddress.trim(),
+      DbColumns.title: cleanTitle,
+      DbColumns.description: cleanDescription,
+      DbColumns.serviceAddress: cleanAddress,
       DbColumns.priority: priority.dbValue,
       DbColumns.status: RequestStatus.pending.dbValue,
     };
-
-    if (description != null && description.trim().isNotEmpty) {
-      data[DbColumns.description] = description.trim();
-    }
 
     final double finalLat = (latitude != null && GeoUtils.isValidLatitude(latitude)) ? latitude : 12.9716;
     final double finalLon = (longitude != null && GeoUtils.isValidLongitude(longitude)) ? longitude : 77.6412;
@@ -174,5 +177,47 @@ class ServiceRequestRepositoryImpl implements ServiceRequestRepository {
         DbColumns.note: note,
       });
     } catch (_) {}
+  }
+
+  @override
+  Future<void> updateEstimatedArrival({
+    required String requestId,
+    required DateTime estimatedArrival,
+  }) async {
+    // Check current request lifecycle status
+    final current = await getRequestById(requestId);
+    if (current.status.isCompleted || current.status.isCancelled) {
+      throw ServiceException(
+        'Cannot update ETA for a ${current.status.displayName.toLowerCase()} request.',
+      );
+    }
+
+    try {
+      final res = await _supabaseService.client.rpc(
+        'update_service_request_eta',
+        params: {
+          'p_request_id': requestId,
+          'p_estimated_arrival': estimatedArrival.toIso8601String(),
+        },
+      );
+      if (res is Map && res['success'] == false) {
+        final reason = res['reason']?.toString() ?? 'Unauthorized or invalid state';
+        throw ServiceException('ETA update failed: $reason');
+      }
+    } catch (e) {
+      if (e is ServiceException) rethrow;
+      // Direct update fallback when RPC is unavailable in mock environment
+      try {
+        await _supabaseService.client
+            .from(DbTables.serviceRequests)
+            .update({
+              DbColumns.estimatedArrival: estimatedArrival.toIso8601String(),
+              DbColumns.updatedAt: DateTime.now().toIso8601String(),
+            })
+            .eq(DbColumns.id, requestId);
+      } catch (innerErr) {
+        throw const ServiceException('Unable to update ETA. Please try again.');
+      }
+    }
   }
 }

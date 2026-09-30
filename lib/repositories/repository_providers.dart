@@ -19,6 +19,7 @@ import 'agent_location_repository_impl.dart';
 import '../services/dispatch_service.dart';
 import '../services/realtime_service.dart';
 import '../services/geolocation_service.dart';
+import '../services/routing_service.dart';
 
 final supabaseServiceProvider = Provider<SupabaseService>((ref) {
   return SupabaseService();
@@ -76,4 +77,8 @@ final agentLocationRepositoryProvider = Provider<AgentLocationRepository>((ref) 
 
 final geolocationServiceProvider = Provider<GeolocationService>((ref) {
   return GeolocationServiceImpl();
+});
+
+final routingServiceProvider = Provider<RoutingService>((ref) {
+  return RoutingServiceImpl();
 });

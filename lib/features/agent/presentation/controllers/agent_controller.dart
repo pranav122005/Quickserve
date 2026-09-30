@@ -276,6 +276,22 @@ class AgentDashboardController extends Notifier<AgentDashboardState> {
     }
   }
 
+  Future<bool> updateEstimatedArrival(String requestId, DateTime eta) async {
+    try {
+      final repo = ref.read(serviceRequestRepositoryProvider);
+      await repo.updateEstimatedArrival(
+        requestId: requestId,
+        estimatedArrival: eta,
+      );
+      await loadAgentData();
+      return true;
+    } catch (e) {
+      final message = ErrorHandler.getUserMessage(e);
+      state = state.copyWith(errorMessage: message);
+      return false;
+    }
+  }
+
   Future<bool> recordPayment({
     required String requestId,
     required String customerId,
