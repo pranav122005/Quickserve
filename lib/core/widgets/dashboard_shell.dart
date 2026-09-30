@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/user_role.dart';
 import '../../features/auth/presentation/controllers/auth_providers.dart';
+import '../../features/notifications/widgets/notification_bell_button.dart';
 
 /// Reusable responsive desktop SaaS dashboard layout & mobile shell wrapper.
 class DashboardShell extends ConsumerStatefulWidget {
@@ -215,12 +216,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
                             ],
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        IconButton(
-                          icon: const Icon(Icons.notifications_none_rounded, color: Color(0xFF64748B)),
-                          onPressed: () {},
-                          tooltip: 'Notifications',
-                        ),
+                        const NotificationBellButton(),
                       ],
                     ),
                   ),

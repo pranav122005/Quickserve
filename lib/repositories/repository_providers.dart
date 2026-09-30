@@ -16,6 +16,8 @@ import 'status_history_repository.dart';
 import 'status_history_repository_impl.dart';
 import 'agent_location_repository.dart';
 import 'agent_location_repository_impl.dart';
+import 'notification_repository.dart';
+import 'notification_repository_impl.dart';
 import '../services/dispatch_service.dart';
 import '../services/realtime_service.dart';
 import '../services/geolocation_service.dart';
@@ -81,4 +83,9 @@ final geolocationServiceProvider = Provider<GeolocationService>((ref) {
 
 final routingServiceProvider = Provider<RoutingService>((ref) {
   return RoutingServiceImpl();
+});
+
+final notificationRepositoryProvider = Provider<NotificationRepository>((ref) {
+  final supabaseService = ref.watch(supabaseServiceProvider);
+  return NotificationRepositoryImpl(supabaseService);
 });

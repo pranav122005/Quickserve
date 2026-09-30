@@ -3,6 +3,7 @@ import '../core/constants/app_constants.dart';
 import '../models/service_request.dart';
 import '../models/service_assignment.dart';
 import '../models/agent_location.dart';
+import '../models/app_notification.dart';
 import 'supabase_service.dart';
 
 /// Manages filtered Supabase Realtime subscriptions.
@@ -149,6 +150,36 @@ class RealtimeService {
           table: DbTables.serviceRequests,
           callback: (_) {
             onRequestChanged();
+          },
+        )
+        .subscribe();
+
+    return channel;
+  }
+
+  /// Subscribes to realtime notifications for [userId].
+  RealtimeChannel subscribeToUserNotifications({
+    required String userId,
+    required void Function(AppNotification notification) onNotificationReceived,
+  }) {
+    final channelName = 'user_notifications_$userId';
+    final channel = _client.channel(channelName);
+
+    channel
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'notifications',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'user_id',
+            value: userId,
+          ),
+          callback: (payload) {
+            if (payload.newRecord.isNotEmpty) {
+              final notification = AppNotification.fromMap(payload.newRecord);
+              onNotificationReceived(notification);
+            }
           },
         )
         .subscribe();

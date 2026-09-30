@@ -12,6 +12,7 @@ import '../controllers/customer_requests_controller.dart';
 import '../widgets/customer_request_details_sheet.dart';
 import 'customer_mobile_create_request_screen.dart';
 import 'customer_tracking_screen.dart';
+import 'package:quickserve/features/notifications/widgets/notification_bell_button.dart';
 
 /// Material 3 classic light theme mobile navigation shell for Customers.
 class CustomerMobileShell extends ConsumerStatefulWidget {
@@ -188,6 +189,7 @@ class _CustomerMobileShellState extends ConsumerState<CustomerMobileShell> {
                       ],
                     ),
                   ),
+                  const NotificationBellButton(),
                 ],
               ),
               const SizedBox(height: 20),
